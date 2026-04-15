@@ -1,0 +1,185 @@
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.modal-content {
+  position: relative;
+  width: 100%;
+  max-width: 800px;
+  background: rgba(15, 15, 18, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 48px;
+  text-align: center;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+}
+
+.modal-close {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-main);
+}
+
+.modal-title {
+  font-size: 32px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+.modal-subtitle {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin-bottom: 40px;
+}
+
+.role-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.role-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 32px 24px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+}
+
+.role-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.student-card::before {
+  background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+}
+
+.company-card::before {
+  background: linear-gradient(90deg, #f97316, #f59e0b);
+}
+
+.role-card:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, 0.05);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+}
+
+.role-card:hover::before {
+  opacity: 1;
+}
+
+.student-card:hover {
+  border-color: rgba(139, 92, 246, 0.3);
+}
+
+.company-card:hover {
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+.role-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-main);
+  transition: all 0.3s;
+}
+
+.student-card:hover .role-icon-wrapper {
+  background: rgba(139, 92, 246, 0.2);
+  color: #a78bfa;
+}
+
+.company-card:hover .role-icon-wrapper {
+  background: rgba(249, 115, 22, 0.2);
+  color: #fb923c;
+}
+
+.role-card h3 {
+  font-size: 22px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.role-card p {
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.admin-link-wrapper {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 24px;
+}
+
+.admin-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.admin-btn:hover {
+  color: var(--text-main);
+}
+
+@media (max-width: 768px) {
+  .role-cards {
+    grid-template-columns: 1fr;
+  }
+  .modal-content {
+    padding: 32px 24px;
+  }
+}
