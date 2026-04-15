@@ -1,6 +1,6 @@
 # TalentSync
 
-VerifyHire is a trusted student job and internship platform focused on verified hiring, resume-based recommendations, and career awareness.
+TalentSync is a trusted student job and internship platform focused on verified hiring, resume-based recommendations, and career awareness.
 
 ## Frontend Scope
 
