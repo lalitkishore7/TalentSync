@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+spacy
+scikit-learn
+pandas
+PyMuPDF
+pydantic
+python-dotenv
+requests

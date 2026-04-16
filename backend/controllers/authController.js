@@ -1,101 +1,121 @@
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const Student = require('../models/Student');
+const Company = require('../models/Company');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcryptjs');
 
-// Helper to generate JWT
-const generateToken = (id, role) => {
-  return jwt.sign({ userId: id, role }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
-  });
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-// @desc    Register a new user
-// @route   POST /api/auth/register
-// @access  Public
-const registerUser = async (req, res) => {
+// @desc    Register a new student
+// @route   POST /api/auth/register/student
+exports.registerStudent = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, role } = req.body;
+    const { name, email, password } = req.body;
+    const userExists = await User.findOne({ email });
 
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
-
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ error: 'User already exists with this email.' });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
     }
 
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({
-      firstName,
-      lastName,
+    const user = await User.create({
+      firstName: name.split(' ')[0],
+      lastName: name.split(' ').slice(1).join(' '),
       email,
       password: hashedPassword,
-      role: role || 'student'
+      role: 'student'
     });
 
-    if (newUser) {
-      res.status(201).json({
-        message: 'User registered successfully',
-        token: generateToken(newUser._id, newUser.role),
-        user: {
-          id: newUser._id,
-          email: newUser.email,
-          firstName: newUser.firstName,
-          lastName: newUser.lastName,
-          role: newUser.role
-        }
-      });
-    } else {
-      res.status(400).json({ error: 'Invalid user data' });
-    }
+    await Student.create({ user: user._id });
+
+    res.status(201).json({
+      _id: user._id,
+      name: `${user.firstName} ${user.lastName}`,
+      email: user.email,
+      role: user.role,
+      token: generateToken(user._id)
+    });
   } catch (error) {
-    console.error('Register Error:', error);
-    res.status(500).json({ error: 'Server error during registration.' });
+    res.status(500).json({ message: error.message });
   }
 };
 
-// @desc    Authenticate a user
+// @desc    Register a new company
+// @route   POST /api/auth/register/company
+exports.registerCompany = async (req, res) => {
+  try {
+    const { companyName, govRegId, gstCin, email, password } = req.body;
+    const userExists = await User.findOne({ email });
+
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
+    }
+
+    // Mock Government Verification
+    const isGovValid = govRegId.startsWith('GOV') && gstCin.length >= 10;
+    const verifiedStatus = isGovValid ? 'verified' : 'rejected';
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
+      firstName: companyName,
+      email,
+      password: hashedPassword,
+      role: 'company'
+    });
+
+    const company = await Company.create({
+      user: user._id,
+      companyName,
+      govRegId,
+      gstCin,
+      verifiedStatus
+    });
+
+    res.status(201).json({
+      _id: user._id,
+      name: user.firstName,
+      email: user.email,
+      role: user.role,
+      verified: company.verifiedStatus === 'verified',
+      token: generateToken(user._id)
+    });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// @desc    Login user (any role)
 // @route   POST /api/auth/login
-// @access  Public
-const loginUser = async (req, res) => {
+exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    if (!email || !password) {
-      return res.status(400).json({ error: 'Email and password are required.' });
-    }
-
     const user = await User.findOne({ email });
-    if (!user) {
-      return res.status(400).json({ error: 'Invalid credentials.' });
-    }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ error: 'Invalid credentials.' });
-    }
-
-    res.json({
-      message: 'Logged in successfully',
-      token: generateToken(user._id, user.role),
-      user: {
-        id: user._id,
-        email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        role: user.role
+    if (user && (await bcrypt.compare(password, user.password))) {
+      let extraInfo = {};
+      if (user.role === 'company') {
+        const company = await Company.findOne({ user: user._id });
+        extraInfo.verified = company.verifiedStatus === 'verified';
       }
-    });
-  } catch (error) {
-    console.error('Login Error:', error);
-    res.status(500).json({ error: 'Server error during login.' });
-  }
-};
 
-module.exports = {
-  registerUser,
-  loginUser
+      res.json({
+        _id: user._id,
+        name: user.role === 'student' ? `${user.firstName} ${user.lastName}` : user.firstName,
+        email: user.email,
+        role: user.role,
+        ...extraInfo,
+        token: generateToken(user._id)
+      });
+    } else {
+      res.status(401).json({ message: 'Invalid email or password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
 };
