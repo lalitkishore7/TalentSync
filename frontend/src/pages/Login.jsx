@@ -2,13 +2,18 @@ import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Shield, Eye, EyeOff, Check } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
 export default function Login() {
   const { role } = useParams();
   const navigate = useNavigate();
+  const { loginUser, registerUser } = useAuth();
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  // Content tailoring based on role
+  const isStudent = role === 'student';
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -29,34 +34,22 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-      const payload = isLogin
-        ? { email: formData.email, password: formData.password }
-        : { ...formData, role: isStudent ? 'student' : 'company' };
+      let data;
+      if (isLogin) {
+        data = await loginUser(formData.email, formData.password);
+      } else {
+        const payload = { ...formData, role: isStudent ? 'student' : 'company' };
+        data = await registerUser(payload);
+      }
 
-      const res = await fetch(`http://localhost:8001${endpoint}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Something went wrong');
-
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-
-      // Redirect home for now upon success
-      navigate('/');
+      // Redirect to dashboard upon success
+      navigate('/dashboard/' + data.user.role);
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
-
-  // Content tailoring based on role
-  const isStudent = role === 'student';
 
   const steps = isStudent
     ? [
@@ -146,7 +139,9 @@ export default function Login() {
 
           <div className="divider">Or</div>
 
-          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="auth-form" onSubmit={handleSubmit}>
+
+            {error && <div style={{ color: '#ef4444', backgroundColor: '#fee2e2', padding: '0.75rem', borderRadius: '0.5rem', marginBottom: '1rem', fontSize: '0.875rem' }}>{error}</div>}
 
             {!isLogin && (
               <div className="form-row">
