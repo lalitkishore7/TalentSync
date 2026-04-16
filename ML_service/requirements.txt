@@ -7,3 +7,4 @@ PyMuPDF
 pydantic
 python-dotenv
 requests
+python-multipart
