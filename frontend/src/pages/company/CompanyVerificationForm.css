@@ -1,0 +1,94 @@
+.cvf-page {
+  padding: 48px 56px;
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.cvf-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+.cvf-header p { font-size: 14px; color: var(--text-muted); }
+
+.cvf-grid { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
+
+.cvf-panel {
+  background: rgba(255,255,255,0.025);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 20px; padding: 28px;
+  display: flex; flex-direction: column; gap: 16px;
+}
+.cvf-panel h3 { font-size: 16px; font-weight: 600; }
+
+/* Info Panel */
+.info-panel { background: rgba(99,102,241,0.05); border-color: rgba(99,102,241,0.15); }
+.req-list { display: flex; flex-direction: column; gap: 10px; list-style: none; padding: 0; }
+.req-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+.review-time { font-size: 13px; color: var(--text-muted); padding-top: 4px; border-top: 1px solid rgba(255,255,255,0.06); }
+
+/* Doc Types */
+.doc-types { display: flex; flex-direction: column; gap: 8px; }
+.doc-type-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 12px 16px; border-radius: 12px;
+  background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+  transition: all 0.2s;
+}
+.doc-type-row.uploaded { border-color: rgba(16,185,129,0.2); background: rgba(16,185,129,0.04); }
+
+.doc-type-label { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; flex: 1; min-width: 0; }
+.doc-type-label span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.doc-uploaded { display: flex; align-items: center; gap: 8px; }
+.doc-name { font-size: 11px; color: #10b981; font-weight: 500; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.doc-remove {
+  background: transparent; border: none; color: var(--text-muted); cursor: pointer;
+  display: flex; align-items: center; transition: color 0.2s;
+}
+.doc-remove:hover { color: #ef4444; }
+
+.doc-upload-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-muted); padding: 6px 14px; border-radius: 8px;
+  font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit;
+  flex-shrink: 0; transition: all 0.2s;
+}
+.doc-upload-btn:hover { color: var(--text-main); border-color: rgba(255,255,255,0.2); }
+
+/* Progress */
+.cvf-progress { display: flex; flex-direction: column; gap: 8px; }
+.cvf-progress span { font-size: 12px; color: var(--text-muted); }
+.cvf-progress-bar { height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.cvf-progress-fill { height: 100%; background: linear-gradient(90deg, #10b981, #34d399); border-radius: 3px; transition: width 0.4s ease; }
+
+/* Submit */
+.submit-docs-btn {
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  width: 100%; padding: 14px;
+  border-radius: 12px; border: none;
+  background: rgba(255,255,255,0.08); color: var(--text-muted);
+  font-size: 14px; font-weight: 600; cursor: not-allowed; font-family: inherit;
+  transition: all 0.3s;
+}
+.submit-docs-btn.ready {
+  background: var(--text-main); color: var(--bg-color); cursor: pointer;
+}
+.submit-docs-btn.ready:hover { opacity: 0.88; }
+
+/* Success */
+.cvf-success {
+  display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 80px 24px; gap: 16px; max-width: 440px; margin: 0 auto;
+}
+.cvf-success-icon {
+  width: 80px; height: 80px; border-radius: 50%;
+  background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.3);
+  color: #10b981; display: flex; align-items: center; justify-content: center;
+}
+.cvf-success h2 { font-size: 24px; font-weight: 700; }
+.cvf-success p { color: var(--text-muted); font-size: 14px; line-height: 1.7; }
+
+@media (max-width: 768px) {
+  .cvf-page { padding: 28px 20px; }
+  .cvf-grid { grid-template-columns: 1fr; }
+}

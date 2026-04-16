@@ -1,0 +1,72 @@
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { MapPin, Clock, DollarSign, Bookmark, BookmarkCheck, ArrowRight, Building2 } from 'lucide-react';
+import './JobCard.css';
+
+export default function JobCard({ job, onApply }) {
+  const [saved, setSaved] = useState(job?.saved || false);
+  const navigate = useNavigate();
+
+  const {
+    id = 1,
+    title = 'Software Engineer',
+    company = 'TechCorp',
+    location = 'Remote',
+    salary = '$80k – $110k',
+    type = 'Full-time',
+    tags = ['React', 'Node.js', 'MongoDB'],
+    posted = '2 days ago',
+    logo,
+    verified = true,
+  } = job || {};
+
+  const goToDetails = () => {
+    navigate(`/dashboard/student/jobs/${id}`);
+  };
+
+  return (
+    <div className="job-card">
+      <div className="job-card-header">
+        <div className="company-logo">
+          {logo ? (
+            <img src={logo} alt={company} />
+          ) : (
+            <Building2 size={20} />
+          )}
+        </div>
+        <div className="company-info" onClick={goToDetails} style={{ cursor: 'pointer' }}>
+          <span className="company-name">{company}</span>
+          {verified && <span className="verified-pill">✓ Verified</span>}
+        </div>
+        <button
+          className={`save-btn ${saved ? 'saved' : ''}`}
+          onClick={() => setSaved(!saved)}
+          title={saved ? 'Remove bookmark' : 'Save job'}
+        >
+          {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+        </button>
+      </div>
+
+      <h3 className="job-title" onClick={goToDetails} style={{ cursor: 'pointer' }}>{title}</h3>
+
+      <div className="job-meta">
+        <span><MapPin size={13} /> {location}</span>
+        <span><DollarSign size={13} /> {salary}</span>
+        <span><Clock size={13} /> {type}</span>
+      </div>
+
+      <div className="job-tags">
+        {tags.slice(0, 3).map(tag => (
+          <span key={tag} className="tag">{tag}</span>
+        ))}
+      </div>
+
+      <div className="job-card-footer">
+        <span className="posted-date">{posted}</span>
+        <button className="apply-btn" onClick={() => onApply?.(job)}>
+          Apply Now <ArrowRight size={14} />
+        </button>
+      </div>
+    </div>
+  );
+}

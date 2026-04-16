@@ -1,0 +1,1 @@
+export default function StudentRegister() { return <div className="p-8">Student Register</div>; }

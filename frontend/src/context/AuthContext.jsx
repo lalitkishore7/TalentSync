@@ -39,12 +39,17 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  const setUserDirectly = (userData) => {
+    setUser(userData);
+  };
+
   const value = {
     user,
     loading,
     loginUser,
     registerUser,
-    logoutUser
+    logoutUser,
+    setUserDirectly
   };
 
   return (

@@ -1,0 +1,1 @@
+export default function Navbar() { return <nav className="p-4 bg-card border-b border-card-border"><div className="font-bold text-xl text-primary">TalentSync</div></nav>; }

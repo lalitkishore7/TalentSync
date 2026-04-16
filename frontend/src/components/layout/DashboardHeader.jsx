@@ -1,0 +1,1 @@
+export default function DashboardHeader() { return <header className="p-4 border-b border-card-border">Dashboard Header</header>; }

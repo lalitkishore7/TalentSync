@@ -1,0 +1,1 @@
+export default function CompanyRegister() { return <div className="p-8">Company Register</div>; }

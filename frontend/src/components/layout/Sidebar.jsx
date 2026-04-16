@@ -1,0 +1,1 @@
+export default function Sidebar() { return <aside className="w-64 bg-card border-r border-card-border p-4">Sidebar</aside>; }

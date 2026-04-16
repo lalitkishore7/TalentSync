@@ -1,0 +1,1 @@
+export default function FraudReports() { return <div className="p-8">Fraud Reports</div>; }

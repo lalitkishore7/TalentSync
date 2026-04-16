@@ -1,0 +1,1 @@
+export default function PendingVerifications() { return <div className="p-8">Pending Verifications</div>; }

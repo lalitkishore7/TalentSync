@@ -1,0 +1,1 @@
+export default function Footer() { return <footer className="p-4 mt-8 bg-card border-t border-card-border text-center text-sm text-slate-400">© 2026 TalentSync</footer>; }

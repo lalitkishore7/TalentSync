@@ -1,0 +1,1 @@
+export default function CompanyLogin() { return <div className="p-8">Company Login</div>; }

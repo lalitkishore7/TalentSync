@@ -1,0 +1,1 @@
+export default function Home() { return <div className="p-8 text-center"><h1 className="text-4xl text-primary font-bold">TalentSync Home</h1></div>; }
