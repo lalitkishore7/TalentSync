@@ -1,14 +1,31 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 :root {
+  --bg-color: #ffffff;
+  --panel-bg: rgba(244, 244, 245, 0.7);
+  --text-main: #18181b;
+  --text-muted: #71717a;
+  --accent: #2563eb;
+  --accent-glow: rgba(37, 99, 235, 0.1);
+  --glass-bg: rgba(255, 255, 255, 0.5);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --sidebar-width: 280px;
+  --sidebar-collapsed-width: 80px;
+  --transition-speed: 0.3s;
+}
+
+.dark {
   --bg-color: #030305;
+  --panel-bg: rgba(255, 255, 255, 0.03);
   --text-main: #ffffff;
   --text-muted: #a1a1aa;
-  --accent: #ff6b00;
-  --accent-glow: rgba(255, 107, 0, 0.15);
+  --accent: #d946ef; /* Vibrant Neon Magenta */
+  --accent-glow: rgba(217, 70, 239, 0.2);
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
+  --accent-alt: #3b82f6; /* Electric Blue for variety */
 }
+
 
 * {
   margin: 0;

@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { 
   Camera, Plus, X, Save, 
-  Lock, Bell, Shield, Key 
+  Lock, Bell, Shield, Key, FileText, ExternalLink
 } from 'lucide-react';
+import CustomDropdown from '../../components/shared/CustomDropdown';
 import './StudentProfile.css';
+
 
 const INITIAL = {
   firstName: 'Alex', lastName: 'Johnson',
@@ -151,12 +153,34 @@ export default function StudentProfile() {
             </div>
           </div>
           <div className="profile-field">
-            <label>Year of Study</label>
-            <select name="year" value={form.year} onChange={handleChange} className="p-input">
-              {['1st Year','2nd Year','3rd Year','4th Year','Graduate'].map(y => <option key={y}>{y}</option>)}
-            </select>
+            <CustomDropdown 
+              label="Year of Study"
+              options={['1st Year','2nd Year','3rd Year','4th Year','Graduate']}
+              value={form.year}
+              onChange={(val) => setForm({ ...form, year: val })}
+            />
           </div>
         </div>
+
+        {/* Resume Section */}
+        <div className="profile-panel">
+          <h3 className="section-title">My Resume</h3>
+          <div className="resume-status-card">
+            <div className="resume-info">
+              <div className="resume-icon-bg">
+                <FileText size={20} />
+              </div>
+              <div className="resume-details">
+                <span className="file-name">Alex_Johnson_Resume.pdf</span>
+                <span className="upload-date">Uploaded on Apr 12, 2026</span>
+              </div>
+            </div>
+            <button className="view-resume-btn" onClick={() => window.open('/resume_sample.pdf', '_blank')}>
+              View <ExternalLink size={14} />
+            </button>
+          </div>
+        </div>
+
 
         {/* Skills */}
         <div className="profile-panel">

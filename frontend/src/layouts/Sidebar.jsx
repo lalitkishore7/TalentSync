@@ -2,12 +2,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   LogOut, Home, Briefcase, FileText, BookmarkCheck, 
   Newspaper, User, Settings, ShieldCheck, PlusCircle, 
-  Users, Building2, Clock
+  Users, Building2, Clock, PanelLeftClose, PanelLeftOpen,
+  Sun, Moon
 } from 'lucide-react';
+import { useTheme } from '../context/ThemeContext';
 
-export default function Sidebar({ isStudent, handleLogout, role, isVerified }) {
+export default function Sidebar({ isStudent, handleLogout, role, isVerified, isCollapsed, setIsCollapsed }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { theme, toggleTheme } = useTheme();
 
   const studentLinks = [
     { icon: Home, label: 'Overview', path: '' },
@@ -27,7 +30,6 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified }) {
     { icon: Building2, label: 'Company Profile', path: 'profile' },
   ];
 
-  // Restricted links for unverified companies
   const restrictedCompanyLinks = [
     { icon: ShieldCheck, label: 'Verification Status', path: 'verification' },
   ];
@@ -39,29 +41,10 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified }) {
   const basePath = `/dashboard/${role}`;
 
   const isActive = (path) => {
-    const [pathOnly, searchOnly] = path.split('?');
+    const [pathOnly] = path.split('?');
     const fullPath = pathOnly ? `${basePath}/${pathOnly}` : basePath;
-    
-    // If it's the home link
-    if (path === '') {
-      return location.pathname === basePath || location.pathname === `${basePath}/`;
-    }
-
-    // Check pathname match
-    const pathMatch = location.pathname.startsWith(fullPath);
-    
-    // If link has a query param, it must also match
-    if (searchOnly) {
-      return pathMatch && location.search.includes(searchOnly);
-    }
-    
-    // If current location has a query param but the link doesn't, 
-    // it's not a match (to distinguish Profile vs Settings)
-    if (location.search && !searchOnly && pathOnly === 'profile') {
-      return false;
-    }
-
-    return pathMatch;
+    if (path === '') return location.pathname === basePath || location.pathname === `${basePath}/`;
+    return location.pathname.startsWith(fullPath);
   };
 
   const handleNav = (path) => {
@@ -69,10 +52,21 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified }) {
   };
 
   return (
-    <aside className="sidebar">
-      <div className="sidebar-brand">
-        TalentSync
-        <span>{isStudent ? 'Student Portal' : 'Company Portal'}</span>
+    <aside className={`sidebar ${isCollapsed ? 'collapsed' : ''}`}>
+      <div className="sidebar-header">
+        {!isCollapsed && (
+          <div className="sidebar-brand">
+            TalentSync
+            <span>{isStudent ? 'Student' : 'Company'}</span>
+          </div>
+        )}
+        <button 
+          className="collapse-toggle" 
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          {isCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+        </button>
       </div>
 
       <nav className="sidebar-nav">
@@ -81,30 +75,48 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified }) {
             key={label}
             className={`side-nav-item ${isActive(path) ? 'active' : ''}`}
             onClick={() => handleNav(path)}
+            title={isCollapsed ? label : ''}
           >
-            <Icon size={18} />
-            {label}
+            <div className="icon-wrapper">
+              <Icon size={20} />
+            </div>
+            {!isCollapsed && <span className="label">{label}</span>}
+            {isCollapsed && isActive(path) && <div className="active-indicator" />}
           </button>
         ))}
 
         {isVerified && (
-          <button className="side-nav-item" onClick={() => navigate(`/dashboard/${role}/profile?tab=settings`)}>
-            <Settings size={18} />
-            Settings
+          <button 
+            className={`side-nav-item ${isActive('profile?tab=settings') ? 'active' : ''}`} 
+            onClick={() => navigate(`/dashboard/${role}/profile?tab=settings`)}
+            title={isCollapsed ? "Settings" : ""}
+          >
+            <div className="icon-wrapper">
+              <Settings size={20} />
+            </div>
+            {!isCollapsed && <span className="label">Settings</span>}
           </button>
         )}
       </nav>
 
       <div className="sidebar-footer">
-        {(!isStudent && !isVerified) && (
-          <div className="pending-badge">
-            <Clock size={12} /> Pending Verification
+        <button 
+          className="theme-toggle-btn" 
+          onClick={toggleTheme}
+          title={`Switch to ${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+        >
+          {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+          {!isCollapsed && <span>{theme === 'light' ? 'Dark Mode' : 'Light Mode'}</span>}
+        </button>
+
+        <button className="logout-btn" onClick={handleLogout} title={isCollapsed ? "Sign Out" : ""}>
+          <div className="icon-wrapper">
+            <LogOut size={20} />
           </div>
-        )}
-        <button className="logout-btn" onClick={handleLogout}>
-          <LogOut size={18} /> Sign Out
+          {!isCollapsed && <span className="label">Sign Out</span>}
         </button>
       </div>
     </aside>
   );
 }
+
