@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Shield, Eye, EyeOff, Check } from 'lucide-react';
 import './Login.css';
 
 export default function Login() {
   const { role } = useParams();
+  const navigate = useNavigate();
   const [isLogin, setIsLogin] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -23,6 +24,11 @@ export default function Login() {
         { id: 2, label: 'Complete government verification' },
         { id: 3, label: 'Post jobs & hire talent' }
       ];
+
+  const handleAuthSubmit = (e) => {
+    e.preventDefault();
+    navigate(`/dashboard/${role}`);
+  };
 
   return (
     <div className="auth-container">
@@ -95,7 +101,7 @@ export default function Login() {
 
           <div className="divider">Or</div>
 
-          <form className="auth-form" onSubmit={(e) => e.preventDefault()}>
+          <form className="auth-form" onSubmit={handleAuthSubmit}>
             
             {!isLogin && (
               <div className="form-row">
