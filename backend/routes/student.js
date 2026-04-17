@@ -6,7 +6,8 @@ const {
   saveJob, 
   unsaveJob, 
   getSavedJobs,
-  getRecommendations 
+  getRecommendations,
+  getDashboardStats
 } = require('../controllers/studentController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 

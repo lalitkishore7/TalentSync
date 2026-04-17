@@ -1,7 +1,7 @@
 const Student = require('../models/Student');
 const Job = require('../models/Job');
 const Application = require('../models/Application');
-const axios = require('axios');
+const { rankJobs, matchCandidateToJob } = require('../services/matchingService');
 
 // @desc    Get current student profile
 // @route   GET /api/student/profile
@@ -10,7 +10,6 @@ exports.getProfile = async (req, res) => {
     let student = await Student.findOne({ user: req.user._id }).populate('user', 'firstName lastName email');
     
     if (!student) {
-      // Create profile if it doesn't exist (e.g. first login)
       student = await Student.create({ user: req.user._id });
     }
     
@@ -94,7 +93,8 @@ exports.getSavedJobs = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
-// @desc    Get AI-powered job recommendations
+
+// @desc    Get AI-powered job recommendations (uses built-in matching engine)
 // @route   GET /api/student/recommendations
 exports.getRecommendations = async (req, res) => {
   try {
@@ -104,41 +104,20 @@ exports.getRecommendations = async (req, res) => {
     const jobs = await Job.find({ status: 'open' }).populate('company', 'companyName location industry');
     
     if (!student.skills || student.skills.length === 0) {
-      // If no skills extracted yet, just return jobs as is
-      return res.json(jobs.map(j => ({ ...j.toObject(), match: 0 })));
+      return res.json(jobs.map(j => ({ ...j.toObject(), match: 0, matchData: null })));
     }
 
-    // Call ML Service for scores
-    try {
-      const mlResponse = await axios.post(`${process.env.ML_SERVICE_URL}/match-jobs`, {
-        candidate_skills: student.skills,
-        jobs: jobs.map(j => ({
-          id: j._id,
-          skillsRequired: j.skillsRequired,
-          description: j.description
-        }))
-      });
+    // Use built-in matching engine (no Python dependency)
+    const candidateData = {
+      skills: student.skills,
+      raw_text: student.parsedResumeText || student.skills.join(' '),
+      experience_years: student.experience_years || 0
+    };
 
-      if (mlResponse.data.success) {
-        const scores = mlResponse.data.matches; // [{ jobId: '...', score: 85 }, ...]
-        
-        // Map scores back to job objects
-        const scoredJobs = jobs.map(job => {
-          const matchData = scores.find(s => s.jobId === job._id.toString());
-          return {
-            ...job.toObject(),
-            match: matchData ? matchData.score : 0
-          };
-        });
-
-        // Sort by match score descending
-        return res.json(scoredJobs.sort((a, b) => b.match - a.match));
-      }
-    } catch (mlErr) {
-      console.error('ML Recommendations Error:', mlErr.message);
-    }
-
-    res.json(jobs);
+    const rankedJobs = rankJobs(candidateData, jobs);
+    
+    console.log(`[Recommendations] Ranked ${rankedJobs.length} jobs for student ${student._id}`);
+    res.json(rankedJobs);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -151,30 +130,21 @@ exports.getDashboardStats = async (req, res) => {
     const student = await Student.findOne({ user: req.user._id });
     if (!student) return res.status(404).json({ message: 'Student profile not found' });
 
-    // 1. Matched Jobs & Top Match Score
+    // 1. Matched Jobs & Top Match Score (using built-in engine)
     const jobs = await Job.find({ status: 'open' });
     let matchedJobsCount = 0;
     let topMatchScore = 0;
 
     if (student.skills && student.skills.length > 0) {
-      try {
-        const mlResponse = await axios.post(`${process.env.ML_SERVICE_URL}/match-jobs`, {
-          candidate_skills: student.skills,
-          jobs: jobs.map(j => ({
-            id: j._id,
-            skillsRequired: j.skillsRequired,
-            description: j.description
-          }))
-        });
+      const candidateData = {
+        skills: student.skills,
+        raw_text: student.parsedResumeText || student.skills.join(' '),
+        experience_years: student.experience_years || 0
+      };
 
-        if (mlResponse.data.success) {
-          const scores = mlResponse.data.matches;
-          matchedJobsCount = scores.filter(s => s.score >= 50).length;
-          topMatchScore = scores.length > 0 ? Math.max(...scores.map(s => s.score)) : 0;
-        }
-      } catch (mlErr) {
-        console.error('ML Stats Error:', mlErr.message);
-      }
+      const ranked = rankJobs(candidateData, jobs);
+      matchedJobsCount = ranked.filter(j => j.match >= 50).length;
+      topMatchScore = ranked.length > 0 ? Math.round(ranked[0].match) : 0;
     }
 
     // 2. Applications Sent
@@ -184,11 +154,11 @@ exports.getDashboardStats = async (req, res) => {
     
     const pendingReviewCount = applications.filter(a => a.status === 'pending').length;
 
-    // 3. Profile Views (Increment a bit for "liveliness" in demo)
+    // 3. Profile Views
     student.profileViews = (student.profileViews || 120) + Math.floor(Math.random() * 5);
     await student.save();
 
-    // 4. Recent Activity (Mix of Appls and Saved Jobs)
+    // 4. Recent Activity
     const populatedStudent = await Student.findById(student._id).populate({
       path: 'savedJobs',
       options: { limit: 5 },
@@ -217,8 +187,8 @@ exports.getDashboardStats = async (req, res) => {
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 4);
 
-    // 5. Profile Strength Calculation
-    let strength = 20; // Base for account creation
+    // 5. Profile Strength
+    let strength = 20;
     if (student.bio) strength += 15;
     if (student.resumeUrl) strength += 25;
     if (student.skills && student.skills.length >= 3) strength += 20;

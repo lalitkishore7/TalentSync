@@ -1,11 +1,20 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import { 
   Upload, FileText, X, Zap, CheckCircle, 
-  Target, Sparkles, BookOpen, Search, 
-  ArrowRight, ShieldCheck, ChevronRight
+  Target, Sparkles, BookOpen, 
+  ShieldCheck, ChevronRight, Shield,
+  Award, Briefcase, GraduationCap, Clock
 } from 'lucide-react';
 import axios from 'axios';
 import './ResumeUpload.css';
+
+const PARSING_STEPS = [
+  { label: 'Extracting text from PDF', icon: FileText },
+  { label: 'Analyzing skills with AI', icon: Zap },
+  { label: 'Detecting experience & education', icon: GraduationCap },
+  { label: 'Computing resume strength', icon: ShieldCheck },
+  { label: 'Anonymizing for bias-free scoring', icon: Shield },
+];
 
 export default function ResumeUpload() {
   const [file, setFile] = useState(null);
@@ -14,6 +23,7 @@ export default function ResumeUpload() {
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [error, setError] = useState('');
+  const [parsingStep, setParsingStep] = useState(0);
   
   // Quick Match State
   const [jd, setJd] = useState('');
@@ -29,6 +39,20 @@ export default function ResumeUpload() {
     if (dropped) handleFile(dropped);
   };
 
+  const simulateSteps = () => {
+    return new Promise((resolve) => {
+      let step = 0;
+      const interval = setInterval(() => {
+        step++;
+        setParsingStep(step);
+        if (step >= PARSING_STEPS.length) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 600);
+    });
+  };
+
   const handleFile = async (f) => {
     if (!f) return;
     setFile(f);
@@ -36,44 +60,52 @@ export default function ResumeUpload() {
     setParsed(false);
     setError('');
     setMatchResult(null);
+    setParsingStep(0);
 
     const token = localStorage.getItem('token');
     const formData = new FormData();
     formData.append('file', f);
 
     try {
-      // Logic from your existing backend integration
-      const response = await axios.post('http://localhost:8001/api/resumes/upload', formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data'
-        }
-      });
+      // Start step animation in parallel with API call
+      const [_, response] = await Promise.all([
+        simulateSteps(),
+        axios.post('http://localhost:8001/api/resumes/upload', formData, {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'multipart/form-data'
+          }
+        })
+      ]);
 
-      const profile = response.data.analysis?.profile || {};
-      const detectedSkills = profile.skills || [];
-      
-      const aiScore = profile.resume_strength;
-      const baseScore = 60;
-      const skillsBonus = Math.min(detectedSkills.length * 4, 30);
-      const experienceBonus = profile.experience_level ? 10 : 0;
-      const heuristicScore = Math.min(baseScore + skillsBonus + experienceBonus, 98);
-      
-      const finalScore = aiScore !== undefined && aiScore !== null ? aiScore : heuristicScore;
+      const result = response.data.analysis;
+      if (result && result.success) {
+        const profile = result.profile || {};
+        const detectedSkills = profile.skills || [];
+        
+        const finalScore = profile.resume_strength || 60;
 
-      setAnalysis({
-        skills: detectedSkills,
-        score: finalScore,
-        role: profile.role || 'Software Engineer',
-        experience: profile.experience_level || 'Mid-level',
-        tips: profile.tips || [
-          "Include outcome-based bullet points (e.g., 'Reduced latency by 20%')",
-          "Add specialized certifications or recent project tech stacks",
-          "Ensure consistent formatting for dates and locations"
-        ],
-        rawProfile: profile
-      });
-      setParsed(true);
+        setAnalysis({
+          skills: detectedSkills,
+          score: finalScore,
+          role: profile.role || 'Software Professional',
+          experience: profile.experience_years ? `${profile.experience_years} years` : 'Entry-level',
+          education_level: profile.education_level || 'Unknown',
+          certifications: profile.certifications || [],
+          education: profile.education || [],
+          experience_list: profile.experience || [],
+          tips: profile.tips || [
+            "Include outcome-based bullet points (e.g., 'Reduced latency by 20%')",
+            "Add specialized certifications or recent project tech stacks",
+            "Ensure consistent formatting for dates and locations"
+          ],
+          source: result.source || 'ai',
+          biasReport: result.biasReport || null
+        });
+        setParsed(true);
+      } else {
+        setError(result?.error || 'Failed to parse resume');
+      }
     } catch (err) {
       setError(err.response?.data?.message || err.message);
     } finally {
@@ -85,17 +117,15 @@ export default function ResumeUpload() {
     if (!jd || !analysis) return;
     setMatching(true);
     try {
-      const response = await axios.post('http://localhost:8000/match-jobs', {
-        candidate_skills: analysis.skills,
-        jobs: [{
-          id: 'manual',
-          skillsRequired: [], // Let the LLM/Semantic matcher handle it from description
-          description: jd
-        }]
+      const token = localStorage.getItem('token');
+      const response = await axios.post('http://localhost:8001/api/resumes/match-job', {
+        job_description: jd
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` }
       });
 
       if (response.data.success) {
-        setMatchResult(response.data.matches[0]);
+        setMatchResult(response.data);
       }
     } catch (err) {
       console.error('Match failed:', err);
@@ -110,6 +140,7 @@ export default function ResumeUpload() {
     setAnalysis(null); 
     setError(''); 
     setMatchResult(null);
+    setParsingStep(0);
   };
 
   return (
@@ -117,6 +148,12 @@ export default function ResumeUpload() {
       <div className="resume-header">
         <h1>AI Talent Optimizer</h1>
         <p>Advanced diagnostic system for skill extraction and career matching.</p>
+        {analysis?.source && (
+          <div className="parser-badge">
+            <Sparkles size={12} />
+            Powered by {analysis.source === 'affinda' ? 'Affinda AI' : 'TalentSync NLP'}
+          </div>
+        )}
       </div>
 
       <div className="resume-grid">
@@ -150,15 +187,29 @@ export default function ResumeUpload() {
               </div>
             )}
 
+            {/* Parsing Steps Animation */}
             {loading && (
-              <div style={{marginTop: '20px', display: 'flex', alignItems: 'center', gap: '12px', color: '#888'}}>
-                <div className="spinner" /> 
-                <span style={{fontSize: '0.9rem'}}>Deciphering skills using Gemini LLM...</span>
+              <div className="parsing-steps">
+                {PARSING_STEPS.map((step, i) => {
+                  const StepIcon = step.icon;
+                  const isComplete = i < parsingStep;
+                  const isActive = i === parsingStep;
+                  return (
+                    <div key={i} className={`parsing-step ${isComplete ? 'complete' : ''} ${isActive ? 'active' : ''}`}>
+                      <div className="step-icon-wrap">
+                        {isComplete ? <CheckCircle size={16} /> : <StepIcon size={16} />}
+                      </div>
+                      <span>{step.label}</span>
+                      {isActive && <div className="step-spinner" />}
+                    </div>
+                  );
+                })}
               </div>
             )}
             {error && <div style={{color: '#ef4444', marginTop: '15px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '8px', fontSize: '0.9rem'}}>{error}</div>}
           </div>
 
+          {/* Quick Match Panel */}
           <div className="resume-panel" style={{marginTop: '30px'}}>
             <h2><Target size={20} /> Real-Time Job Match</h2>
             <p style={{color: '#888', fontSize: '0.9rem', marginBottom: '20px'}}>Paste any Job Description to verify your compatibility score.</p>
@@ -182,11 +233,44 @@ export default function ResumeUpload() {
               <div className="match-result-overlay">
                 <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                   <span style={{fontWeight: 600}}>AI Match Score:</span>
-                  <span style={{fontSize: '1.5rem', fontWeight: 800, color: matchResult.score > 75 ? '#10b981' : '#f59e0b'}}>{matchResult.score}%</span>
+                  <span style={{fontSize: '1.5rem', fontWeight: 800, color: matchResult.match_percent > 75 ? '#10b981' : '#f59e0b'}}>{matchResult.match_percent}%</span>
                 </div>
                 <div style={{marginTop: '10px', height: '8px', background: 'rgba(255,255,255,0.1)', borderRadius: '4px', overflow: 'hidden'}}>
-                   <div style={{width: `${matchResult.score}%`, height: '100%', background: matchResult.score > 75 ? '#10b981' : '#f59e0b', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'}}></div>
+                   <div style={{width: `${matchResult.match_percent}%`, height: '100%', background: matchResult.match_percent > 75 ? '#10b981' : '#f59e0b', transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)'}}></div>
                 </div>
+                {/* Score Breakdown */}
+                <div className="match-breakdown">
+                  <div className="breakdown-item">
+                    <span>Skill Match</span>
+                    <span className="breakdown-val">{matchResult.skill_score}%</span>
+                  </div>
+                  <div className="breakdown-item">
+                    <span>Semantic Fit</span>
+                    <span className="breakdown-val">{matchResult.semantic_score}%</span>
+                  </div>
+                  <div className="breakdown-item">
+                    <span>Experience</span>
+                    <span className="breakdown-val">{matchResult.exp_score}%</span>
+                  </div>
+                </div>
+                {/* Matched / Missing Skills */}
+                {matchResult.matched_skills?.length > 0 && (
+                  <div style={{marginTop: '12px'}}>
+                    <div className="skills-grid">
+                      {matchResult.matched_skills.map((s, i) => (
+                        <span key={i} className="skill-chip detected"><CheckCircle size={12} /> {s}</span>
+                      ))}
+                      {(matchResult.missing_skills || []).slice(0, 4).map((s, i) => (
+                        <span key={`m-${i}`} className="skill-chip missing"><X size={12} /> {s}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {matchResult.bias_free && (
+                  <div className="bias-badge">
+                    <Shield size={12} /> Bias-Free Score — AI never saw name, gender, or age
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -221,12 +305,27 @@ export default function ResumeUpload() {
 
                 <div style={{textAlign: 'center', marginTop: '10px'}}>
                    <div style={{fontSize: '1.2rem', fontWeight: 700}}>{analysis.role}</div>
-                   <div style={{color: '#888', fontSize: '0.9rem'}}>{analysis.experience} Profile</div>
+                   <div style={{color: '#888', fontSize: '0.9rem'}}>{analysis.experience} • {analysis.education_level}</div>
                 </div>
 
+                {/* Certifications */}
+                {analysis.certifications.length > 0 && (
+                  <div className="cert-section">
+                    <h3 style={{fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px'}}>
+                      <Award size={14} color="#f59e0b" /> Certifications
+                    </h3>
+                    <div className="skills-grid">
+                      {analysis.certifications.map((c, i) => (
+                        <span key={i} className="skill-chip cert">{c}</span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Skills */}
                 <div className="skills-section" style={{width: '100%'}}>
                   <h3 style={{fontSize: '1rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '15px'}}>
-                    <Zap size={14} color="#10b981" /> Extracted Skill Intelligence
+                    <Zap size={14} color="#10b981" /> Extracted Skill Intelligence ({analysis.skills.length})
                   </h3>
                   <div className="skills-grid">
                     {analysis.skills.map((s, i) => (
@@ -236,6 +335,14 @@ export default function ResumeUpload() {
                     ))}
                   </div>
                 </div>
+
+                {/* Bias Report */}
+                {analysis.biasReport && (
+                  <div className="bias-report">
+                    <Shield size={14} />
+                    <span>{analysis.biasReport.message}</span>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{textAlign: 'center', padding: '60px 0', color: '#555'}}>

@@ -168,7 +168,13 @@ export default function AIRecommendedJobs() {
             const jobId = job.id || job._id || `job-${index}`;
             return (
               <div key={jobId} className="job-card-wrap">
-                <div className="match-score-badge">{job.match || 85}% match</div>
+                <div className="match-score-badge" style={{
+                  background: (job.match || 0) >= 80 ? 'rgba(16, 185, 129, 0.15)' : (job.match || 0) >= 60 ? 'rgba(99, 102, 241, 0.15)' : 'rgba(245, 158, 11, 0.15)',
+                  color: (job.match || 0) >= 80 ? '#10b981' : (job.match || 0) >= 60 ? '#6366f1' : '#f59e0b',
+                  borderColor: (job.match || 0) >= 80 ? 'rgba(16, 185, 129, 0.3)' : (job.match || 0) >= 60 ? 'rgba(99, 102, 241, 0.3)' : 'rgba(245, 158, 11, 0.3)'
+                }}>
+                  {Math.round(job.match || 0)}% match
+                </div>
                  <JobCard 
                   job={{
                     ...job,
@@ -183,6 +189,34 @@ export default function AIRecommendedJobs() {
                   isSaved={(savedJobIds || []).includes(jobId)}
                   onToggleSave={handleToggleSave}
                 />
+                {/* Match Score Breakdown */}
+                {job.matchData && (
+                  <div className="match-details">
+                    <div className="match-bar-row">
+                      <span className="match-label">Skills</span>
+                      <div className="match-bar-bg"><div className="match-bar-fill" style={{width: `${job.matchData.skill_score}%`}} /></div>
+                      <span className="match-pct">{Math.round(job.matchData.skill_score)}%</span>
+                    </div>
+                    <div className="match-bar-row">
+                      <span className="match-label">Semantic</span>
+                      <div className="match-bar-bg"><div className="match-bar-fill semantic" style={{width: `${job.matchData.semantic_score}%`}} /></div>
+                      <span className="match-pct">{Math.round(job.matchData.semantic_score)}%</span>
+                    </div>
+                    {job.matchData.matched_skills?.length > 0 && (
+                      <div className="match-skills-row">
+                        {job.matchData.matched_skills.slice(0, 4).map((s, si) => (
+                          <span key={si} className="mini-skill matched">✓ {s}</span>
+                        ))}
+                        {(job.matchData.missing_skills || []).slice(0, 2).map((s, si) => (
+                          <span key={`m-${si}`} className="mini-skill missing">✗ {s}</span>
+                        ))}
+                      </div>
+                    )}
+                    {job.matchData.bias_free && (
+                      <div className="bias-free-tag">🛡 Bias-Free Score</div>
+                    )}
+                  </div>
+                )}
                 <button 
                   className="view-gap-btn"
                   onClick={() => handleViewGap(job)}

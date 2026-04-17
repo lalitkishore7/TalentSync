@@ -38,6 +38,29 @@ const StudentSchema = new mongoose.Schema({
   savedJobs: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job'
+  }],
+  // AI-parsed resume fields
+  experience_years: {
+    type: Number,
+    default: 0
+  },
+  education_level: String,
+  certifications: [String],
+  parsedResumeText: String,
+  detectedRole: String,
+  resumeStrength: {
+    type: Number,
+    default: 0
+  },
+  parsedEducation: [{
+    institution: String,
+    degree: String,
+    dates: String
+  }],
+  parsedExperience: [{
+    company: String,
+    title: String,
+    description: String
   }]
 }, { timestamps: true });
 
