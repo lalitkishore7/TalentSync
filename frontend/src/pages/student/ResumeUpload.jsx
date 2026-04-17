@@ -260,7 +260,10 @@ export default function ResumeUpload() {
                  ))}
                </div>
              ) : (
-               <p style={{color: '#555', textAlign: 'center', padding: '20px'}}>No data available.</p>
+               <div style={{textAlign: 'center', padding: '30px 20px', color: '#555'}}>
+                 <Sparkles size={32} style={{opacity: 0.2, marginBottom: '12px'}} />
+                 <p style={{fontSize: '0.9rem'}}>Initialize analysis to see AI recommendations.</p>
+               </div>
              )}
           </div>
         </div>

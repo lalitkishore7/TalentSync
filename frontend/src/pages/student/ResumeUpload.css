@@ -320,3 +320,110 @@
   from { opacity: 0; transform: translateY(-10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+/* Quick Match Tool Styles */
+.jd-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 16px;
+  color: #fff;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  resize: none;
+  margin-bottom: 16px;
+  transition: all 0.3s ease;
+}
+
+.jd-input:focus {
+  outline: none;
+  border-color: var(--primary);
+  background: rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+}
+
+.jd-input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.match-action-btn {
+  width: 100%;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2);
+}
+
+.match-action-btn:hover:not(:disabled) {
+  background: #4f46e5;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3);
+}
+
+.match-action-btn:disabled {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.2);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Tips Grid Styles */
+.tips-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.tip-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--glass-border);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  gap: 16px;
+  transition: all 0.3s ease;
+}
+
+.tip-card:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateX(6px);
+  border-color: var(--secondary);
+}
+
+.tip-icon {
+  width: 32px;
+  height: 32px;
+  background: rgba(167, 139, 250, 0.1);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--secondary);
+  flex-shrink: 0;
+}
+
+.tip-content h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  color: #fff;
+}
+
+.tip-content p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
