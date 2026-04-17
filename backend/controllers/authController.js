@@ -58,6 +58,7 @@ exports.register = async (req, res) => {
         companyName: companyName || firstName,
         govRegId: regId,
         gstCin: gstNumber,
+        location: hqAddress,
         verifiedStatus
       });
     } else if (user.role === 'faculty') {

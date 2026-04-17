@@ -14,9 +14,42 @@ exports.createJob = async (req, res) => {
       return res.status(403).json({ message: 'Only verified companies can post jobs' });
     }
 
+    // 1. Run AI Fraud Detection before saving
+    let fraudRisk = 0;
+    let flaggedReasons = [];
+    
+    try {
+      if (req.body.description) {
+        const mlResponse = await axios.post(`${process.env.ML_SERVICE_URL}/fraud-detect`, {
+          job_description: req.body.description
+        });
+        
+        if (mlResponse.data.success) {
+          const analysis = mlResponse.data.analysis;
+          fraudRisk = analysis.risk_score || 0;
+          flaggedReasons = analysis.reasons || [];
+          
+          // Reject immediately if highly fraudulent
+          if (analysis.is_fraud || fraudRisk > 70) {
+             return res.status(400).json({ 
+                 message: 'Job posting blocked due to security concerns.', 
+                 reasons: flaggedReasons 
+             });
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Fraud Detection Error:', err.message);
+      // We log but don't strictly block if ML service is temporarily down, or we could block.
+      // Letting it pass with 0 risk for now to ensure system stability if AI is down.
+    }
+
+    // 2. Create the Job
     const job = await Job.create({
       ...req.body,
-      company: company._id
+      company: company._id,
+      fraudRisk: fraudRisk,
+      flaggedReasons: flaggedReasons
     });
 
     res.status(201).json(job);

@@ -31,6 +31,10 @@ const StudentSchema = new mongoose.Schema({
   },
   github: String,
   linkedin: String,
+  profileViews: {
+    type: Number,
+    default: 0
+  },
   savedJobs: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Job'
