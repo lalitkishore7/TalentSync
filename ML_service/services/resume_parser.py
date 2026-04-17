@@ -4,12 +4,20 @@ import re
 from core.config import config
 
 def extract_text_from_pdf(pdf_path: str) -> str:
-    """Extracts raw text from a PDF file."""
+    """Extracts raw text from a PDF file with basic cleanup."""
     text = ""
-    with fitz.open(pdf_path) as doc:
-        for page in doc:
-            text += page.get_text()
-    return text
+    try:
+        with fitz.open(pdf_path) as doc:
+            for page in doc:
+                text += page.get_text()
+        
+        # Basic cleanup: remove excessive whitespace and normalize line endings
+        text = re.sub(r'\n+', '\n', text)
+        text = re.sub(r' +', ' ', text)
+        return text.strip()
+    except Exception as e:
+        print(f"PDF Extraction Error: {e}")
+        return ""
 
 def parse_with_gemini(text: str) -> dict:
     """Uses Gemini LLM to convert resume text into structured JSON."""
@@ -23,18 +31,22 @@ def parse_with_gemini(text: str) -> dict:
     {text[:10000]}
 
     EXTRACT THE FOLLOWING JSON FIELDS:
-    - skills: (A comprehensive list of technical, soft, and tool-based skills)
-    - role: (Primary job title or specialization)
-    - experience_level: (One of: "Entry-level", "Junior", "Mid-level", "Senior", "Lead")
-    - projects: (List of significant project names with a 1-sentence description each)
-    - education: (Most relevant degree and institution)
-    - summary: (A 2-sentence professional bio)
+    - skills: (A comprehensive list of specific technical, soft, and tool-based skills found in the text)
+    - role: (The primary job title, current position, or professional specialization)
+    - experience_level: (Identify as one of: "Entry-level", "Junior", "Mid-level", "Senior", "Lead")
+    - resume_strength: (A score from 0 to 100 based on formatting, clarity, and skill depth)
+    - tips: (A list of 3 highly specific, actionable tips to improve this resume for the identified role)
+    - projects: (List of notable project names with a short 1-sentence description)
+    - education: (Most recent or relevant degree and institution)
+    - summary: (A professional 2-sentence summary of the profile)
 
-    GUIDELINES:
-    - Return ONLY the raw JSON object.
-    - Do not include markdown code blocks (e.g., no ```json).
-    - If a field is missing, use null or an empty list.
-    - Ensure field names match EXACTLY as listed above.
+    STRICT GUIDELINES:
+    1. Return ONLY the raw JSON object.
+    2. Do NOT include any markdown formatting like ```json or ```.
+    3. Ensure all keys and strings are properly quoted.
+    4. If a piece of information is missing, use null or an empty list [].
+    5. Clean up skill names (e.g., "Python Programming" -> "Python").
+    6. Ensure the output is valid JSON.
     """
     
     try:
