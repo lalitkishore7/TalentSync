@@ -101,44 +101,52 @@ export default function StudentProfile() {
         {error && <div className="error-alert">{error}</div>}
 
         <div className="profile-grid">
-          <div className="profile-panel" style={{gridColumn: 'span 2'}}>
-            <h3 className="section-title"><Lock size={16} style={{marginRight: 8, verticalAlign: 'middle'}}/> Password & Security</h3>
-            <div className="profile-field-row">
-              <div className="profile-field">
-                <label>Current Password</label>
-                <input type="password" placeholder="••••••••" className="p-input" />
+          <div className="settings-card" style={{gridColumn: 'span 2'}}>
+            <h3 className="settings-section-title"><Lock size={18} style={{marginRight: 8, verticalAlign: 'middle', color: '#3b82f6'}}/> Password & Security</h3>
+            <div className="settings-content-wrapper">
+              <div className="profile-field-row">
+                <div className="profile-field">
+                  <label>Current Password</label>
+                  <input type="password" placeholder="••••••••" className="p-input settings-input" />
+                </div>
               </div>
+              <div className="profile-field-row">
+                <div className="profile-field">
+                  <label>New Password</label>
+                  <input type="password" placeholder="••••••••" className="p-input settings-input" />
+                </div>
+                <div className="profile-field">
+                  <label>Confirm New Password</label>
+                  <input type="password" placeholder="••••••••" className="p-input settings-input" />
+                </div>
+              </div>
+              <div className="settings-divider"></div>
+              <button className="btn-change-password">Update Password</button>
             </div>
-            <div className="profile-field-row">
-              <div className="profile-field">
-                <label>New Password</label>
-                <input type="password" placeholder="••••••••" className="p-input" />
-              </div>
-              <div className="profile-field">
-                <label>Confirm New Password</label>
-                <input type="password" placeholder="••••••••" className="p-input" />
-              </div>
-            </div>
-            <button className="add-skill-btn" style={{width: 'fit-content', padding: '0 20px', marginTop: 10, fontSize: 13}}>Change Password</button>
           </div>
 
-          <div className="profile-panel" style={{gridColumn: 'span 2'}}>
-            <h3 className="section-title"><Bell size={16} style={{marginRight: 8, verticalAlign: 'middle'}}/> Notification Preferences</h3>
-            <div className="settings-toggle-list">
-              {[
-                { label: 'Job Alerts', desc: 'Get notified when new jobs matching your skills are posted.' },
-                { label: 'Application Updates', desc: 'Alerts when a company reviews or updates your application status.' },
-                { label: 'Platform Messages', desc: 'Notifications for direct messages from recruiters.' },
-                { label: 'Tech News Digest', desc: 'Weekly summary of top IT news and trends.' }
-              ].map(item => (
-                <div key={item.label} className="settings-toggle-row">
-                  <div>
-                    <div style={{fontWeight: '600', fontSize: '14px'}}>{item.label}</div>
-                    <div style={{fontSize: '12px', color: 'var(--text-muted)'}}>{item.desc}</div>
+          <div className="settings-card" style={{gridColumn: 'span 2'}}>
+            <h3 className="settings-section-title"><Bell size={18} style={{marginRight: 8, verticalAlign: 'middle', color: '#3b82f6'}}/> Notification Preferences</h3>
+            <div className="settings-content-wrapper">
+              <div className="settings-toggle-list">
+                {[
+                  { label: 'Job Alerts', desc: 'Get notified when new jobs matching your skills are posted.' },
+                  { label: 'Application Updates', desc: 'Alerts when a company reviews or updates your application status.' },
+                  { label: 'Platform Messages', desc: 'Notifications for direct messages from recruiters.' },
+                  { label: 'Tech News Digest', desc: 'Weekly summary of top IT news and trends.' }
+                ].map((item, index) => (
+                  <div key={item.label}>
+                    <div className="settings-toggle-row">
+                      <div>
+                        <div className="settings-toggle-label">{item.label}</div>
+                        <div className="settings-toggle-desc">{item.desc}</div>
+                      </div>
+                      <input type="checkbox" defaultChecked />
+                    </div>
+                    {index < 3 && <div className="settings-divider"></div>}
                   </div>
-                  <input type="checkbox" defaultChecked />
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>

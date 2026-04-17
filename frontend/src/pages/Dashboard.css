@@ -82,14 +82,15 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px;
+  padding: 10px 16px;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 14px;
-  border-radius: 12px;
+  border-radius: 8px;
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   font-weight: 500;
   border: none;
+  border-left: 4px solid transparent;
   background: transparent;
   cursor: pointer;
   width: 100%;
@@ -97,23 +98,25 @@
 }
 
 .side-nav-item:hover {
-  background: var(--glass-border);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-main);
 }
 
 .side-nav-item.active {
-  background: var(--accent);
-  color: #ffffff;
-  box-shadow: 0 4px 15px var(--accent-glow);
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border-left: 4px solid #3b82f6;
+  box-shadow: none;
 }
 
 .side-nav-item.active .icon-wrapper {
-  color: #ffffff;
+  color: #3b82f6;
 }
 
 .sidebar.collapsed .side-nav-item {
   justify-content: center;
   padding: 12px;
+  border-left: none;
 }
 
 .icon-wrapper {
@@ -124,12 +127,7 @@
 }
 
 .active-indicator {
-  position: absolute;
-  left: -12px;
-  width: 4px;
-  height: 20px;
-  background: var(--accent);
-  border-radius: 0 4px 4px 0;
+  display: none;
 }
 
 /* Footer & Actions */
@@ -192,10 +190,6 @@
 }
 
 /* Dark Theme Vibrant Overrides */
-.dark .side-nav-item.active {
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
-}
-
 .dark .sidebar {
   background: rgba(10, 10, 12, 0.8);
 }

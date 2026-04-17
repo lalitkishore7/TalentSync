@@ -1,6 +1,6 @@
 .job-card {
-  background: rgba(255, 255, 255, 0.025);
-  border: 1px solid rgba(255, 255, 255, 0.07);
+  background: var(--panel-bg);
+  border: 1px solid var(--glass-border);
   border-radius: 20px;
   padding: 24px;
   display: flex;
@@ -10,6 +10,7 @@
   cursor: default;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
 .job-card::before {
@@ -23,10 +24,9 @@
 }
 
 .job-card:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--accent);
   transform: translateY(-3px);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 .job-card:hover::before { opacity: 1; }
@@ -41,8 +41,8 @@
   width: 44px;
   height: 44px;
   border-radius: 12px;
-  background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  border: 1px solid var(--glass-border);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -82,7 +82,7 @@
 
 .save-btn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.1);
+  border: 1px solid var(--glass-border);
   color: var(--text-muted);
   width: 34px; height: 34px;
   border-radius: 10px;
@@ -127,8 +127,8 @@
 
 .tag {
   font-size: 12px;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: transparent;
+  border: 1px solid var(--glass-border);
   padding: 4px 10px;
   border-radius: 20px;
   color: var(--text-muted);

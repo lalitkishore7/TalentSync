@@ -53,14 +53,14 @@
 .news-categories { display: flex; gap: 8px; flex-wrap: wrap; }
 
 .news-cat-btn {
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.08);
+  background: var(--panel-bg);
+  border: 1px solid var(--glass-border);
   color: var(--text-muted);
   padding: 8px 18px; border-radius: 20px;
   font-size: 13px; font-weight: 500;
   cursor: pointer; font-family: inherit; transition: all 0.2s;
 }
-.news-cat-btn:hover { border-color: rgba(255,255,255,0.2); color: var(--text-main); }
+.news-cat-btn:hover { border-color: var(--accent); color: var(--text-main); }
 .news-cat-btn.active {
   background: var(--text-main); color: var(--bg-color); border-color: transparent;
 }

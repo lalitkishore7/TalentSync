@@ -42,13 +42,14 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified, isC
 
   const isActive = (path) => {
     const fullPath = path ? `${basePath}/${path}` : basePath;
+    const currentFullPath = location.pathname + location.search;
     
-    // Exact match for the dashboard root
     if (path === '') return location.pathname === basePath || location.pathname === `${basePath}/`;
     
-    // For other paths, ensure it matches exactly or is a sub-path that doesn't conflict
-    // e.g., if we are in /profile?tab=settings, we might want only Settings active, not Profile
-    const currentFullPath = location.pathname + location.search;
+    if (path === 'profile' && currentFullPath.includes('tab=settings')) {
+      return false;
+    }
+
     return currentFullPath.startsWith(fullPath);
   };
 

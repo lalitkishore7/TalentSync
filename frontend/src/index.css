@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
 
 :root {
-  --bg-color: #ffffff;
-  --panel-bg: rgba(244, 244, 245, 0.7);
-  --text-main: #18181b;
-  --text-muted: #71717a;
+  --bg-color: #f8fafc;
+  --panel-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
   --accent: #2563eb;
+  --accent-alt: #3b82f6;
   --accent-glow: rgba(37, 99, 235, 0.1);
-  --glass-bg: rgba(255, 255, 255, 0.5);
-  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-border: #cbd5e1;
   --sidebar-width: 240px;
   --sidebar-collapsed-width: 80px;
   --transition-speed: 0.3s;
@@ -19,11 +20,11 @@
   --panel-bg: rgba(255, 255, 255, 0.03);
   --text-main: #ffffff;
   --text-muted: #a1a1aa;
-  --accent: #d946ef; /* Vibrant Neon Magenta */
-  --accent-glow: rgba(217, 70, 239, 0.2);
+  --accent: #ff6b00; /* Vibrant Orange */
+  --accent-glow: rgba(255, 107, 0, 0.2);
   --glass-bg: rgba(255, 255, 255, 0.03);
   --glass-border: rgba(255, 255, 255, 0.08);
-  --accent-alt: #3b82f6; /* Electric Blue for variety */
+  --accent-alt: #f59e0b; /* Amber */
 }
 
 
@@ -39,6 +40,7 @@ body {
   color: var(--text-main);
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Animations */
