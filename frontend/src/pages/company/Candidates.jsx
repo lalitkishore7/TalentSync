@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { 
-  Users, Mail, Phone, Download, CheckCircle2, XCircle, 
-  ExternalLink, Search, Filter, MoreVertical, Building2 
+  Mail, Download, MoreVertical, Search, Filter
 } from 'lucide-react';
-import './CompanyDashboard.css'; // Reusing base panel styles
+import './Candidates.css';
 
 const CANDIDATES = [
   { id: 1, name: 'Arjun Mehta', role: 'Frontend Developer', email: 'arjun@example.com', match: 94, status: 'Shortlisted', applied: '2 days ago', avatar: 'AM' },
@@ -15,104 +14,86 @@ const CANDIDATES = [
 export default function Candidates() {
   const [searchTerm, setSearchTerm] = useState('');
 
+  const getStatusClass = (status) => {
+    switch (status.toLowerCase()) {
+      case 'shortlisted': return 'shortlisted';
+      case 'new': return 'new';
+      case 'under review': return 'under-review';
+      case 'rejected': return 'rejected';
+      default: return '';
+    }
+  };
+
   return (
-    <div className="company-dash" style={{ padding: '48px 56px' }}>
-      <div className="dash-header" style={{ marginBottom: '32px' }}>
+    <div className="candidates-page">
+      <div className="candidates-header">
         <div>
-          <h1 className="dash-title">Candidate Pipeline</h1>
-          <p className="dash-subtitle">Manage applicants and track their status through the hiring funnel.</p>
+          <h1>Candidate Pipeline</h1>
+          <p>Manage applicants and track their status through the hiring funnel.</p>
         </div>
-        <div className="header-actions" style={{ display: 'flex', gap: '12px' }}>
-          <div className="search-wrap" style={{ position: 'relative' }}>
-            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+        <div className="header-actions">
+          <div className="search-wrap">
+            <Search size={18} className="search-icon" />
             <input 
               type="text" 
+              className="search-input"
               placeholder="Search candidates..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              style={{ 
-                background: 'rgba(255,255,255,0.05)', 
-                border: '1px solid rgba(255,255,255,0.1)', 
-                borderRadius: '10px', 
-                padding: '10px 16px 10px 36px', 
-                color: 'var(--text-main)',
-                width: '260px'
-              }} 
             />
           </div>
-          <button className="filter-btn" style={{ 
-            background: 'rgba(255,255,255,0.05)', 
-            border: '1px solid rgba(255,255,255,0.1)', 
-            borderRadius: '10px', 
-            padding: '10px 16px', 
-            color: 'var(--text-main)',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            cursor: 'pointer'
-          }}>
-            <Filter size={16} /> Filters
+          <button className="filter-btn">
+            <Filter size={18} /> Filters
           </button>
         </div>
       </div>
 
-      <div className="dash-panel" style={{ padding: '0', overflow: 'hidden' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+      <div className="candidates-panel">
+        <table className="candidates-table">
           <thead>
-            <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-              <th style={{ padding: '16px 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>CANDIDATE</th>
-              <th style={{ padding: '16px 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>APPLIED ROLE</th>
-              <th style={{ padding: '16px 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>MATCH %</th>
-              <th style={{ padding: '16px 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>STATUS</th>
-              <th style={{ padding: '16px 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>APPLIED</th>
-              <th style={{ padding: '16px 24px', fontSize: '12px', color: 'var(--text-muted)', fontWeight: '600' }}>ACTIONS</th>
+            <tr>
+              <th>Candidate</th>
+              <th>Applied Role</th>
+              <th>Match %</th>
+              <th>Status</th>
+              <th>Applied</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             {CANDIDATES.map((c) => (
-              <tr key={c.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)' }}>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <div style={{ 
-                      width: '36px', height: '36px', borderRadius: '50%', 
-                      background: 'rgba(255,107,0,0.1)', color: 'var(--accent)', 
-                      display: 'flex', alignItems: 'center', justifyCenter: 'center', 
-                      fontSize: '13px', fontWeight: '700',
-                      justifyContent: 'center'
-                    }}>
+              <tr key={c.id}>
+                <td>
+                  <div className="candidate-info">
+                    <div className="candidate-avatar">
                       {c.avatar}
                     </div>
                     <div>
-                      <div style={{ fontWeight: '600', fontSize: '14px' }}>{c.name}</div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>{c.email}</div>
+                      <div className="candidate-name">{c.name}</div>
+                      <div className="candidate-email">{c.email}</div>
                     </div>
                   </div>
                 </td>
-                <td style={{ padding: '16px 24px', fontSize: '14px' }}>{c.role}</td>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ width: '100px', height: '6px', background: 'rgba(255,255,255,0.05)', borderRadius: '3px', overflow: 'hidden' }}>
-                      <div style={{ width: `${c.match}%`, height: '100%', background: 'var(--accent)' }}></div>
+                <td className="role-text">{c.role}</td>
+                <td>
+                  <div className="match-bar-wrap">
+                    <div className="match-bar-bg">
+                      <div className="match-bar-fill" style={{ width: `${c.match}%` }}></div>
                     </div>
-                    <span style={{ fontSize: '13px', fontWeight: '600' }}>{c.match}%</span>
+                    <span className="match-percent">{c.match}%</span>
                   </div>
                 </td>
-                <td style={{ padding: '16px 24px' }}>
-                  <span style={{ 
-                    padding: '4px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: '700',
-                    background: c.status === 'Shortlisted' ? 'rgba(16,185,129,0.1)' : 'rgba(255,255,255,0.05)',
-                    color: c.status === 'Shortlisted' ? '#10b981' : 'var(--text-muted)',
-                    border: c.status === 'Shortlisted' ? '1px solid rgba(16,185,129,0.2)' : '1px solid rgba(255,255,255,0.1)'
-                  }}>
+                <td>
+                  <span className={`status-badge ${getStatusClass(c.status)}`}>
                     {c.status}
                   </span>
                 </td>
-                <td style={{ padding: '16px 24px', fontSize: '13px', color: 'var(--text-muted)' }}>{c.applied}</td>
-                <td style={{ padding: '16px 24px' }}>
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Mail size={16} /></button>
-                    <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><Download size={16} /></button>
-                    <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><MoreVertical size={16} /></button>
+                <td className="applied-date">{c.applied}</td>
+                <td>
+                  <div className="table-actions">
+                    <button className="action-btn" title="Message"><Mail size={16} /></button>
+                    <button className="action-btn" title="Download Resume"><Download size={16} /></button>
+                    <button className="action-btn" title="More Options"><MoreVertical size={16} /></button>
                   </div>
                 </td>
               </tr>

@@ -4,10 +4,10 @@ import { useAuth } from '../../context/AuthContext';
 import './StudentDashboard.css';
 
 const kpis = [
-  { icon: Briefcase, label: 'Matched Jobs', value: '24', delta: '+3 this week', color: '#6366f1' },
-  { icon: Send, label: 'Applications Sent', value: '7', delta: '2 pending review', color: '#f59e0b' },
-  { icon: Eye, label: 'Profile Views', value: '142', delta: '+18 today', color: '#10b981' },
-  { icon: TrendingUp, label: 'Match Score', value: '87%', delta: 'Top 10%', color: '#ff6b00' },
+  { icon: Briefcase, label: 'Matched Jobs', value: '24', delta: '+3 this week', type: 'blue' },
+  { icon: Send, label: 'Applications Sent', value: '7', delta: '2 pending review', type: 'orange' },
+  { icon: Eye, label: 'Profile Views', value: '142', delta: '+18 today', type: 'green' },
+  { icon: TrendingUp, label: 'Match Score', value: '87%', delta: 'Top 10%', type: 'purple' },
 ];
 
 const recentActivity = [
@@ -39,10 +39,10 @@ export default function StudentDashboard() {
 
       {/* KPI Grid */}
       <div className="kpi-row">
-        {kpis.map(({ icon: Icon, label, value, delta, color }) => (
-          <div className="kpi-tile" key={label}>
-            <div className="kpi-icon" style={{ background: `${color}18`, color }}>
-              <Icon size={20} />
+        {kpis.map(({ icon: Icon, label, value, delta, type }) => (
+          <div className={`kpi-tile ${type}`} key={label}>
+            <div className="kpi-icon">
+              <Icon size={24} />
             </div>
             <div className="kpi-info">
               <span className="kpi-label">{label}</span>

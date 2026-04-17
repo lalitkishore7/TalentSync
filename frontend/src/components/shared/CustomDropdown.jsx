@@ -26,6 +26,7 @@ export default function CustomDropdown({ options, value, onChange, label, placeh
       className="custom-dropdown-container" 
       ref={dropdownRef}
       style={{ zIndex: isOpen ? 2100 : 1 }}
+      tabIndex={0}
     >
       {label && <label className="dropdown-label">{label}</label>}
       <div 

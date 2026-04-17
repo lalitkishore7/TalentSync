@@ -1,17 +1,39 @@
 import { useState, useEffect } from 'react';
 import { motion, useScroll, useSpring } from 'framer-motion';
 import { Shield, Users, CheckCircle, Zap, MessageSquare, Mail, ChevronDown, Play, ArrowRight } from 'lucide-react';
+import { FaInstagram, FaTwitter, FaLinkedin } from 'react-icons/fa';
 import RoleSelectionModal from '../components/RoleSelectionModal';
 import { useTheme } from '../context/ThemeContext';
 import Navbar from '../layouts/Navbar';
+import FadeUp from '../components/animations/FadeUp';
+import Stagger from '../components/animations/Stagger';
+import StaggerItem from '../components/animations/StaggerItem';
 import '../App.css';
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 50 },
+  hidden: { opacity: 0, y: 30 },
   visible: { 
     opacity: 1, 
     y: 0, 
     transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } 
+  }
+};
+
+const slideLeft = {
+  hidden: { opacity: 0, x: -60 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.8, ease: "easeOut" } 
+  }
+};
+
+const slideRight = {
+  hidden: { opacity: 0, x: 60 },
+  visible: { 
+    opacity: 1, 
+    x: 0, 
+    transition: { duration: 0.8, ease: "easeOut" } 
   }
 };
 
@@ -30,191 +52,233 @@ const Section = ({ id, children, className }) => (
 
 export default function LandingPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [activeFaq, setActiveFaq] = useState(null);
   const { setTheme } = useTheme();
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'dark';
     setTheme('dark');
-    return () => setTheme(savedTheme);
+    return () => setTheme(localStorage.getItem('theme') || 'dark');
   }, [setTheme]);
 
   const { scrollYProgress } = useScroll();
-  const scaleX = useSpring(scrollYProgress, {
-    stiffness: 100,
-    damping: 30,
-    restDelta: 0.001
-  });
+  const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
   return (
     <div className="landing-page-root dark">
       <motion.div className="scroll-progress" style={{ scaleX }} />
       
-      <div className="hero-container-vetra">
-        <div className="vetra-bg-arc"></div>
+      <Navbar setIsModalOpen={setIsModalOpen} />
 
-        <Navbar setIsModalOpen={setIsModalOpen} />
+      {/* Fixed Hero Section */}
+      <div className="hero-sticky-container">
+        <div className="hero-glow-base" />
+        <div className="hero-vertical-bars">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="hero-bar" />
+          ))}
+        </div>
 
         <main className="hero-content-vetra">
-          {/* Badge removed as requested */}
-
           <motion.h1
             className="vetra-title"
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           >
             Trusted Opportunities <br />
-            <span className="elegant-italic">Smarter Careers.</span>
+            <motion.span 
+              className="elegant-italic"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1, delay: 0.5 }}
+            >
+              Smarter Careers.
+            </motion.span>
           </motion.h1>
 
           <motion.p
             className="vetra-subtitle"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1, delay: 0.8 }}
           >
             AI-driven recruitment & insights. Empower your future, connect with verified companies, and maximize your potential effortlessly.
           </motion.p>
 
           <motion.div 
-            className="vetra-actions"
+            className="hero-actions-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6 }}
+            transition={{ duration: 0.8, delay: 1 }}
           >
-            <button className="btn-vetra-solid" onClick={() => setIsModalOpen(true)}>
-              Get started for free
+            <button className="btn-get-started-hero" onClick={() => setIsModalOpen(true)}>
+              Get Started
             </button>
           </motion.div>
 
           <motion.div 
-            className="vetra-trusted"
+            className="hero-social-row"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
+            transition={{ delay: 1.2 }}
           >
-            <p>Trusted by 200+ companies</p>
-            <div className="trusted-logos">
-              <span><Shield size={16}/> FeatherDev</span>
-              <span><Zap size={16}/> Boltshift</span>
-              <span><CheckCircle size={16}/> GlobalBank</span>
-              <span><Users size={16}/> Lightbox</span>
+            <div className="hero-social-icon">
+              <FaInstagram size={18} />
+            </div>
+            <div className="hero-social-icon">
+              <FaTwitter size={18} />
+            </div>
+            <div className="hero-social-icon">
+              <FaLinkedin size={18} />
             </div>
           </motion.div>
         </main>
       </div>
 
-      <Section id="about" className="about-section">
-        <div className="section-header">
-          <span className="section-badge">ABOUT US</span>
-          <h2>Getting to know TalentSync</h2>
-          <p>We are more than just a recruitment platform; we are your trusted partner in navigating the complexities of your career.</p>
-        </div>
-        
-        <div className="stats-grid">
-          <div className="stat-card orange">
-            <div className="stat-icon"><Users size={24} /></div>
-            <div className="stat-value"><span>100K USERS</span></div>
-            <p>TalentSync rapidly attracting a substantial user base of over 500,000 students within its first year.</p>
+      {/* Content Wrapper that scrolls over the Hero */}
+      <div className="content-wrapper-next">
+        <Section id="about" className="about-section">
+          <FadeUp>
+            <div className="section-header">
+              <span className="section-badge">ABOUT US</span>
+              <h2>Getting to know TalentSync</h2>
+              <p>We are more than just a recruitment platform; we are your trusted partner in navigating the complexities of your career.</p>
+            </div>
+          </FadeUp>
+          
+          <div className="stats-grid">
+            <motion.div className="stat-card orange" variants={slideLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <div className="stat-icon"><Users size={24} /></div>
+              <div className="stat-value"><span>100K USERS</span></div>
+              <p>TalentSync rapidly attracting a substantial user base of over 500,000 students within its first year.</p>
+            </motion.div>
+            <motion.div className="stat-card black" variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <div className="stat-icon"><Zap size={24} /></div>
+              <div className="stat-value"><span>98%</span></div>
+              <p>Users enjoy faster match rates and automated verification processing time.</p>
+            </motion.div>
+            <motion.div className="stat-card gray" variants={slideRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <div className="stat-icon"><Shield size={24} /></div>
+              <div className="stat-value"> <span>10K COMPANIES</span></div>
+              <p>A network of over 24,000 verified partner companies worldwide.</p>
+            </motion.div>
           </div>
-          <div className="stat-card black">
-            <div className="stat-icon"><Zap size={24} /></div>
-            <div className="stat-value"><span>98%</span></div>
-            <p>Users enjoy faster match rates and automated verification processing time.</p>
-          </div>
-          <div className="stat-card gray">
-            <div className="stat-icon"><Shield size={24} /></div>
-            <div className="stat-value"> <span>10K COMPANIES</span></div>
-            <p>A network of over 24,000 verified partner companies worldwide.</p>
-          </div>
-        </div>
-      </Section>
+        </Section>
 
-      <Section id="features" className="features-section">
-        <div className="features-container">
-          <div className="features-text">
-            <span className="section-badge">FEATURES</span>
-            <h2>All-in-one platform for your future</h2>
-            <p>Simplify your career search by securely connecting with verified companies and automated matching.</p>
+        <Section id="features" className="features-section">
+          <div className="features-container">
+            <FadeUp>
+              <div className="section-header">
+                <span className="section-badge">FEATURES</span>
+                <h2>All-in-one platform for your future</h2>
+                <p>Simplify your career search by securely connecting with verified companies and automated matching.</p>
+              </div>
+            </FadeUp>
             
-            <div className="features-list">
+            <Stagger>
+              <div className="features-list">
+                {[
+                  { id: '01', title: 'Secure and Easy Verification', desc: 'Government-backed automated verification for all companies.' },
+                  { id: '02', title: 'AI-Powered Job Matching', desc: 'Smarter recommendations based on your unique skills and profile.' },
+                  { id: '03', title: 'Real-Time Application Tracking', desc: 'Monitor your progress from application to offer in one place.' }
+                ].map(f => (
+                  <StaggerItem key={f.id}>
+                    <div className="feature-item">
+                      <span className="feature-id">{f.id}</span>
+                      <div className="feature-info">
+                        <h4>{f.title}</h4>
+                        <p>{f.desc}</p>
+                      </div>
+                    </div>
+                  </StaggerItem>
+                ))}
+              </div>
+            </Stagger>
+          </div>
+        </Section>
+
+        <Section id="faqs" className="faq-section">
+          <FadeUp>
+            <div className="section-header">
+              <span className="section-badge">FAQs</span>
+              <h2>Frequently Asked Questions</h2>
+            </div>
+          </FadeUp>
+          <Stagger>
+            <div className="faq-grid">
               {[
-                { id: '01', title: 'Secure and Easy Verification', desc: 'Government-backed automated verification for all companies.' },
-                { id: '02', title: 'AI-Powered Job Matching', desc: 'Smarter recommendations based on your unique skills and profile.' },
-                { id: '03', title: 'Real-Time Application Tracking', desc: 'Monitor your progress from application to offer in one place.' }
-              ].map(f => (
-                <div key={f.id} className="feature-item">
-                  <span className="feature-id">{f.id}</span>
-                  <div className="feature-info">
-                    <h4>{f.title}</h4>
-                    <p>{f.desc}</p>
+                { q: "Is TalentSync free for students?", a: "Yes, TalentSync is completely free for all students looking for opportunities." },
+                { q: "How does AI matching work?", a: "Our AI analyzes your skills, experience, and preferences to match you with the best roles." },
+                { q: "Are all companies verified?", a: "Yes, we use government data and automated checks to ensure 100% verification." },
+                { q: "Can I track my applications?", a: "Absolutely. Your dashboard provides real-time updates on every application." }
+              ].map((item, i) => (
+                <StaggerItem key={i}>
+                  <div 
+                    className={`faq-card ${activeFaq === i ? 'active' : ''}`}
+                    onClick={() => setActiveFaq(activeFaq === i ? null : i)}
+                  >
+                    <div className="faq-question">
+                      <h4>{item.q}</h4>
+                      <motion.div animate={{ rotate: activeFaq === i ? 180 : 0 }}>
+                        <ChevronDown size={20} />
+                      </motion.div>
+                    </div>
+                    <motion.div 
+                      className="faq-answer"
+                      initial={false}
+                      animate={{ height: activeFaq === i ? 'auto' : 0, opacity: activeFaq === i ? 1 : 0 }}
+                      style={{ overflow: 'hidden' }}
+                    >
+                      <p>{item.a}</p>
+                    </motion.div>
                   </div>
-                </div>
+                </StaggerItem>
               ))}
             </div>
-          </div>
-          {/* Visual box removed as requested */}
-        </div>
-      </Section>
+          </Stagger>
+        </Section>
 
-      <Section id="faqs" className="faq-section">
-        <span className="section-badge">FAQs</span>
-        <h2>Frequently Asked Questions</h2>
-        <div className="faq-grid">
-          {[
-            { q: "Is TalentSync free for students?", a: "Yes, TalentSync is completely free for all students looking for opportunities." },
-            { q: "How does AI matching work?", a: "Our AI analyzes your skills, experience, and preferences to match you with the best roles." },
-            { q: "Are all companies verified?", a: "Yes, we use government data and automated checks to ensure 100% verification." },
-            { q: "Can I track my applications?", a: "Absolutely. Your dashboard provides real-time updates on every application." }
-          ].map((item, i) => (
-            <div key={i} className="faq-card">
-              <h4>{item.q}</h4>
-              <p>{item.a}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
-
-      <Section id="contact" className="contact-section">
-        <div className="contact-container">
-          <div className="contact-info">
-            <h2>Let's build your future together</h2>
-            <p>Have questions? Our team is here to help you get started.</p>
-            <div className="contact-methods">
-              <div className="method">
-                <Mail size={20} />
-                <span>support@talentsync.com</span>
-              </div>
-              <div className="method">
-                <MessageSquare size={20} />
-                <span>Live Chat Support</span>
+        <Section id="contact" className="contact-section">
+          <div className="contact-container">
+            <div className="contact-info">
+              <h2>Let's build your future together</h2>
+              <p>Have questions? Our team is here to help you get started.</p>
+              <div className="contact-methods">
+                <div className="method">
+                  <Mail size={20} />
+                  <span>support@talentsync.com</span>
+                </div>
+                <div className="method">
+                  <MessageSquare size={20} />
+                  <span>Live Chat Support</span>
+                </div>
               </div>
             </div>
+            <form className="contact-form" onSubmit={e => e.preventDefault()}>
+              <div className="form-group">
+                <input type="text" placeholder="Full Name" />
+              </div>
+              <div className="form-group">
+                <input type="email" placeholder="Email Address" />
+              </div>
+              <div className="form-group">
+                <textarea placeholder="How can we help?" rows={4}></textarea>
+              </div>
+              <button className="btn btn-primary w-full">Send Message</button>
+            </form>
           </div>
-          <form className="contact-form" onSubmit={e => e.preventDefault()}>
-            <div className="form-group">
-              <input type="text" placeholder="Full Name" />
-            </div>
-            <div className="form-group">
-              <input type="email" placeholder="Email Address" />
-            </div>
-            <div className="form-group">
-              <textarea placeholder="How can we help?" rows={4}></textarea>
-            </div>
-            <button className="btn btn-primary w-full">Send Message</button>
-          </form>
-        </div>
-      </Section>
+        </Section>
 
-      <footer className="landing-footer">
-        <div className="footer-content">
-          <div className="footer-logo">
-            <Shield size={24} className="logo-icon" />
-            <span>TalentSync</span>
+        <footer className="landing-footer">
+          <div className="footer-content">
+            <div className="footer-logo">
+              <Shield size={24} className="logo-icon" />
+              <span>TalentSync</span>
+            </div>
+            <p>© 2026 TalentSync. All rights reserved.</p>
           </div>
-          <p>© 2026 TalentSync. All rights reserved.</p>
-        </div>
-      </footer>
+        </footer>
+      </div>
 
       <RoleSelectionModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>

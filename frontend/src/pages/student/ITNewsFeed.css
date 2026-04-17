@@ -1,78 +1,85 @@
 .news-page {
-  padding: 48px 56px;
-  max-width: 1100px;
+  padding: 40px;
+  max-width: 1200px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 32px;
 }
 
-.news-header { display: flex; align-items: flex-start; justify-content: space-between; }
-.news-header-left { display: flex; flex-direction: column; gap: 8px; }
+.news-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+.news-header-left { display: flex; flex-direction: column; gap: 4px; }
 
 .news-badge {
-  display: inline-flex; align-items: center; gap: 6px;
-  font-size: 11px; font-weight: 700;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 700;
   color: var(--accent);
-  background: var(--accent-glow);
-  border: 1px solid var(--accent-glow);
-  padding: 4px 12px; border-radius: 20px; width: fit-content;
+  background: var(--blue-soft);
+  border: 1px solid var(--blue-border);
+  padding: 6px 14px; border-radius: 99px; width: fit-content;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.news-page h1 { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
+.news-page h1 { font-size: 32px; font-weight: 800; letter-spacing: -1px; color: var(--text-main); }
 
 .refresh-news-btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--panel-bg);
+  background: var(--bg-card);
   border: 1px solid var(--glass-border);
   color: var(--text-main);
-  padding: 10px 18px;
-  border-radius: 12px;
+  padding: 12px 20px;
+  border-radius: 14px;
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--card-shadow);
 }
 
 .refresh-news-btn:hover:not(:disabled) {
-  background: var(--accent-glow);
+  background: var(--bg-color);
   border-color: var(--accent);
   color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: var(--card-shadow-hover);
 }
 
 .refresh-news-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
-.news-page > .news-header p { font-size: 14px; color: var(--text-muted); }
+.news-header-left p { font-size: 16px; color: var(--text-muted); font-weight: 500; }
 
-.news-categories { display: flex; gap: 8px; flex-wrap: wrap; }
+.news-categories { display: flex; gap: 10px; flex-wrap: wrap; }
 
 .news-cat-btn {
-  background: var(--panel-bg);
+  background: var(--bg-card);
   border: 1px solid var(--glass-border);
   color: var(--text-muted);
-  padding: 8px 18px; border-radius: 20px;
-  font-size: 13px; font-weight: 500;
+  padding: 10px 20px; border-radius: 12px;
+  font-size: 14px; font-weight: 600;
   cursor: pointer; font-family: inherit; transition: all 0.2s;
+  box-shadow: var(--card-shadow);
 }
-.news-cat-btn:hover { border-color: var(--accent); color: var(--text-main); }
+
+.news-cat-btn:hover { border-color: var(--accent); color: var(--accent); }
 .news-cat-btn.active {
-  background: var(--text-main); color: var(--bg-color); border-color: transparent;
+  background: var(--accent); color: #fff; border-color: var(--accent);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 24px;
 }
 
 @media (max-width: 768px) {
-  .news-page { padding: 28px 20px; }
+  .news-page { padding: 32px 20px; }
+  .news-header { flex-direction: column; align-items: flex-start; }
 }
 
 .spin {
@@ -89,27 +96,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 80px 20px;
+  padding: 100px 40px;
   text-align: center;
-  gap: 20px;
-  background: var(--panel-bg);
+  gap: 24px;
+  background: var(--bg-card);
   border: 1px dashed var(--glass-border);
-  border-radius: 24px;
+  border-radius: 32px;
   color: var(--text-muted);
+  box-shadow: var(--card-shadow);
 }
 
 .news-loading-state p {
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 18px;
+  color: var(--text-main);
 }
 
 .news-error-state button {
-  padding: 10px 24px;
+  padding: 12px 24px;
   background: var(--accent);
   color: #fff;
-  border-radius: 10px;
+  border-radius: 12px;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s;
 }
 

@@ -5,10 +5,10 @@ import '../student/StudentDashboard.css';
 import './CompanyDashboard.css';
 
 const kpis = [
-  { icon: Briefcase, label: 'Active Jobs', value: '5', delta: '2 expiring soon', color: '#6366f1' },
-  { icon: Users, label: 'Total Applicants', value: '138', delta: '+24 this week', color: '#f59e0b' },
-  { icon: ShieldCheck, label: 'Verification', value: 'Verified', delta: 'Government approved', color: '#10b981' },
-  { icon: TrendingUp, label: 'Hire Rate', value: '18%', delta: 'Above industry avg', color: '#ff6b00' },
+  { icon: Briefcase, label: 'Active Jobs', value: '5', delta: '2 expiring soon', type: 'blue' },
+  { icon: Users, label: 'Total Applicants', value: '138', delta: '+24 this week', type: 'orange' },
+  { icon: ShieldCheck, label: 'Verification', value: 'Verified', delta: 'Government approved', type: 'green' },
+  { icon: TrendingUp, label: 'Hire Rate', value: '18%', delta: 'Above industry avg', type: 'purple' },
 ];
 
 const recentApplicants = [
@@ -44,10 +44,10 @@ export default function CompanyDashboard() {
       </div>
 
       <div className="kpi-row">
-        {kpis.map(({ icon: Icon, label, value, delta, color }) => (
-          <div className="kpi-tile" key={label}>
-            <div className="kpi-icon" style={{ background: `${color}18`, color }}>
-              <Icon size={20} />
+        {kpis.map(({ icon: Icon, label, value, delta, type }) => (
+          <div className={`kpi-tile ${type}`} key={label}>
+            <div className="kpi-icon">
+              <Icon size={24} />
             </div>
             <div className="kpi-info">
               <span className="kpi-label">{label}</span>

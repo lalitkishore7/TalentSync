@@ -1,16 +1,28 @@
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Shield } from 'lucide-react';
 
 const navVariants = {
-  hidden: { opacity: 0, y: -20 },
+  hidden: { opacity: 0, y: -20, x: '-50%' },
   visible: {
     opacity: 1,
     y: 0,
+    x: '-50%',
     transition: { duration: 0.6, ease: "easeOut" }
   }
 };
 
 export default function Navbar({ setIsModalOpen }) {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   const links = [
     { name: 'Features', href: '#features' },
     { name: 'About', href: '#about' },
@@ -19,21 +31,24 @@ export default function Navbar({ setIsModalOpen }) {
   ];
 
   return (
-    <div className="navbar-vetra">
-      <motion.div className="nav-logo-left" initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-        <div className="logo-icon-wrap">
-          <Shield className="logo-icon-v" size={24} />
-        </div>
+    <motion.div 
+      className={`navbar-vetra ${scrolled ? 'scrolled' : ''}`}
+      variants={navVariants}
+      initial="hidden"
+      animate="visible"
+    >
+      <div className="nav-logo-left">
+        <Shield className="logo-icon-v" size={24} />
         <span className="logo-text-v">TalentSync</span>
-      </motion.div>
+      </div>
 
-      <motion.nav className="nav-links-center" variants={navVariants} initial="hidden" animate="visible">
+      <nav className="nav-links-center">
         {links.map((link) => (
           <a key={link.name} href={link.href} className="nav-link-v">
             {link.name}
           </a>
         ))}
-      </motion.nav>
-    </div>
+      </nav>
+    </motion.div>
   );
 }

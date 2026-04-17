@@ -1,102 +1,144 @@
 .cp-page {
-  padding: 48px 56px;
-  max-width: 960px;
+  padding: 40px;
+  max-width: 1400px;
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 32px;
 }
-.cp-header { display: flex; align-items: center; justify-content: space-between; }
-.cp-header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+
+.cp-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; }
+
+.cp-header h1 { 
+  font-size: 32px; 
+  font-weight: 800; 
+  letter-spacing: -1px;
+  color: var(--text-main);
+}
 
 .cp-save-btn {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--text-main); color: var(--bg-color);
-  border: none; padding: 11px 22px; border-radius: 12px;
-  font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit;
-  transition: opacity 0.2s;
+  display: flex; align-items: center; gap: 10px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%); 
+  color: #fff;
+  border: none; padding: 12px 28px; border-radius: 14px;
+  font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
-.cp-save-btn:hover { opacity: 0.85; }
 
-.cp-grid { display: flex; flex-direction: column; gap: 20px; }
+.cp-save-btn:hover { 
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px var(--accent-glow);
+}
+
+.cp-grid { display: flex; flex-direction: column; gap: 24px; }
 
 .cp-panel {
-  background: rgba(255,255,255,0.025);
-  border: 1px solid rgba(255,255,255,0.07);
-  border-radius: 20px; padding: 28px;
-  display: flex; flex-direction: column; gap: 18px;
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: 24px; padding: 32px;
+  display: flex; flex-direction: column; gap: 24px;
+  box-shadow: var(--card-shadow);
 }
 
-.brand-panel { flex-direction: row; align-items: flex-start; gap: 28px; }
-.brand-logo-wrap { display: flex; flex-direction: column; align-items: center; gap: 10px; flex-shrink: 0; }
+.brand-panel { flex-direction: row; align-items: flex-start; gap: 32px; }
+
+.brand-logo-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; flex-shrink: 0; }
+
 .brand-logo {
-  width: 90px; height: 90px; border-radius: 20px;
-  background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.2);
-  display: flex; align-items: center; justify-content: center; color: #818cf8;
+  width: 100px; height: 100px; border-radius: 24px;
+  background: var(--blue-soft); border: 1px solid var(--blue-border);
+  display: flex; align-items: center; justify-content: center; color: var(--accent);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
 }
-.logo-edit-btn {
-  display: flex; align-items: center; gap: 5px;
-  background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
-  color: var(--text-muted); padding: 6px 12px; border-radius: 8px;
-  font-size: 12px; cursor: pointer; font-family: inherit; white-space: nowrap;
-  transition: all 0.2s;
-}
-.logo-edit-btn:hover { color: var(--text-main); }
 
-.brand-name { font-size: 22px; font-weight: 700; letter-spacing: -0.4px; }
-.brand-tagline { font-size: 13px; color: var(--text-muted); }
-.brand-meta { display: flex; flex-direction: column; gap: 8px; }
-.brand-meta span { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--text-muted); }
-.brand-meta a { color: var(--accent); text-decoration: none; }
+.logo-edit-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: var(--bg-color); border: 1px solid var(--glass-border);
+  color: var(--text-muted); padding: 8px 16px; border-radius: 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: all 0.2s;
+  box-shadow: var(--card-shadow);
+}
+
+.logo-edit-btn:hover { 
+  color: var(--accent); 
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.brand-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); margin-bottom: 4px; }
+.brand-tagline { font-size: 14px; color: var(--text-muted); font-weight: 600; }
+
+.brand-meta { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.brand-meta span { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--text-muted); font-weight: 600; }
+.brand-meta a { color: var(--accent); text-decoration: none; font-weight: 700; }
 .brand-meta a:hover { text-decoration: underline; }
 
-.cp-section { font-size: 15px; font-weight: 600; }
-.cp-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-.cp-field { display: flex; flex-direction: column; gap: 7px; }
-.cp-field label { font-size: 12px; font-weight: 500; color: var(--text-muted); }
+.cp-section { font-size: 16px; font-weight: 800; color: var(--text-main); }
+.cp-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; }
+.cp-field { display: flex; flex-direction: column; gap: 8px; }
+.cp-field label { font-size: 14px; font-weight: 700; color: var(--text-main); opacity: 0.9; }
 
 .cp-input, .cp-textarea {
-  background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08);
-  border-radius: 10px; padding: 11px 14px;
-  color: var(--text-main); font-size: 14px; font-family: inherit;
-  outline: none; transition: border-color 0.2s; width: 100%;
+  background: var(--bg-color); border: 1px solid var(--glass-border);
+  border-radius: 14px; padding: 14px 18px;
+  color: var(--text-main); font-size: 15px; font-family: inherit;
+  outline: none; transition: all 0.2s; width: 100%;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
-.cp-input:focus, .cp-textarea:focus { border-color: rgba(255,255,255,0.25); }
-.cp-textarea { resize: vertical; line-height: 1.6; }
+
+.cp-input:focus, .cp-textarea:focus { 
+  border-color: var(--accent); 
+  background: #fff;
+  box-shadow: 0 0 0 4px var(--accent-glow);
+}
+
+.cp-textarea { resize: vertical; line-height: 1.6; min-height: 120px; }
 select.cp-input { cursor: pointer; }
 
-@media (max-width: 768px) {
-  .cp-page { padding: 28px 20px; }
-  .brand-panel { flex-direction: column; }
-}
-
 /* Settings Specific */
-.settings-toggle-list { display: flex; flex-direction: column; gap: 4px; }
+.settings-toggle-list { display: flex; flex-direction: column; gap: 12px; }
 .settings-toggle-row {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 14px 18px; border-radius: 12px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.04);
-  transition: background 0.2s;
+  padding: 16px 20px; border-radius: 16px;
+  background: var(--bg-color);
+  border: 1px solid transparent;
+  transition: all 0.2s;
 }
-.settings-toggle-row:hover { background: rgba(255,255,255,0.04); }
+
+.settings-toggle-row:hover { 
+  background: #fff; 
+  border-color: var(--glass-border);
+  box-shadow: var(--card-shadow);
+}
 
 .settings-toggle-row input[type="checkbox"] {
   appearance: none;
-  width: 38px; height: 20px;
-  background: rgba(255,255,255,0.1);
+  width: 44px; height: 24px;
+  background: var(--glass-border);
   border-radius: 20px; position: relative;
-  cursor: pointer; transition: background 0.3s;
+  cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .settings-toggle-row input[type="checkbox"]:checked {
   background: var(--accent);
 }
+
 .settings-toggle-row input[type="checkbox"]::before {
   content: ''; position: absolute;
-  width: 14px; height: 14px; border-radius: 50%;
+  width: 18px; height: 18px; border-radius: 50%;
   background: #fff; top: 3px; left: 3px;
-  transition: transform 0.3s;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
+
 .settings-toggle-row input[type="checkbox"]:checked::before {
-  transform: translateX(18px);
+  transform: translateX(20px);
+}
+
+@media (max-width: 1024px) {
+  .cp-page { padding: 32px 20px; }
+  .brand-panel { flex-direction: column; align-items: center; text-align: center; }
+  .brand-meta span { justify-content: center; }
 }

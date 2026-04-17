@@ -1,6 +1,6 @@
 .profile-page {
   padding: 40px;
-  max-width: 1200px;
+  max-width: 1400px;
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -12,52 +12,61 @@
   display: flex; 
   align-items: center; 
   justify-content: space-between;
+  gap: 24px;
 }
 
 .profile-header h1 { 
   font-size: 32px; 
-  font-weight: 700; 
-  letter-spacing: -1px; 
+  font-weight: 800; 
+  letter-spacing: -1px;
+  color: var(--text-main);
 }
 
 .save-profile-btn {
   display: flex; 
   align-items: center; 
-  gap: 8px;
-  background: var(--accent); 
+  gap: 10px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%); 
   color: #fff;
   border: none; 
-  padding: 12px 24px; 
-  border-radius: 12px;
+  padding: 12px 28px; 
+  border-radius: 14px;
   font-size: 15px; 
-  font-weight: 600; 
+  font-weight: 700; 
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 15px var(--accent-glow);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 .save-profile-btn:hover { 
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px var(--accent-glow);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 8px 20px var(--accent-glow);
 }
 
 .profile-grid {
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 24px;
+  grid-template-columns: 320px 1fr;
+  gap: 32px;
 }
 
 .profile-panel {
-  background: var(--panel-bg);
-  backdrop-filter: blur(12px);
+  background: var(--bg-card);
   border: 1px solid var(--glass-border);
   border-radius: 24px;
   padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  transition: transform 0.2s ease;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  gap: 24px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--card-shadow);
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure panel with open dropdown/focus is above others */
+.profile-panel:focus-within {
+  z-index: 100;
+  box-shadow: var(--card-shadow-hover);
 }
 
 /* Avatar */
@@ -68,28 +77,28 @@
 
 .avatar-circle {
   position: relative;
-  width: 100px; 
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-alt) 100%);
+  width: 120px; 
+  height: 120px;
+  border-radius: 32px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
   display: flex; 
   align-items: center; 
   justify-content: center;
-  font-size: 32px; 
+  font-size: 42px; 
   font-weight: 800; 
   color: #fff;
-  margin-bottom: 8px;
-  box-shadow: 0 10px 25px -5px var(--accent-glow);
+  margin-bottom: 16px;
+  box-shadow: 0 10px 30px var(--accent-glow);
 }
 
 .avatar-edit {
   position: absolute; 
-  bottom: 0; 
-  right: 0;
-  width: 32px; 
-  height: 32px;
-  border-radius: 50%;
-  background: var(--bg-color); 
+  bottom: -10px; 
+  right: -10px;
+  width: 40px; 
+  height: 40px;
+  border-radius: 12px;
+  background: var(--bg-card); 
   color: var(--text-main);
   border: 1px solid var(--glass-border); 
   cursor: pointer;
@@ -97,64 +106,70 @@
   align-items: center; 
   justify-content: center;
   transition: all 0.2s;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: var(--card-shadow);
 }
 
 .avatar-edit:hover { 
-  transform: scale(1.1);
+  transform: scale(1.1) rotate(15deg);
   border-color: var(--accent);
+  color: var(--accent);
 }
 
 .avatar-name { 
-  font-size: 20px; 
-  font-weight: 700; 
+  font-size: 24px; 
+  font-weight: 800; 
   letter-spacing: -0.5px;
+  color: var(--text-main);
+  margin-bottom: 4px;
 }
 
 .avatar-school { 
-  font-size: 13px; 
+  font-size: 14px; 
   color: var(--text-muted); 
+  font-weight: 600;
 }
 
 .avatar-links { 
   display: flex; 
-  gap: 8px; 
+  gap: 10px; 
   flex-wrap: wrap; 
   justify-content: center; 
-  margin-top: 8px;
+  margin-top: 16px;
 }
 
 .profile-link {
-  font-size: 12px; 
-  font-weight: 600;
+  font-size: 13px; 
+  font-weight: 700;
   color: var(--text-main);
   text-decoration: none;
-  padding: 6px 14px;
+  padding: 8px 16px;
   border: 1px solid var(--glass-border);
-  border-radius: 10px;
-  background: var(--glass-bg);
+  border-radius: 12px;
+  background: var(--bg-color);
   transition: all 0.2s;
 }
 
 .profile-link:hover { 
   border-color: var(--accent);
   color: var(--accent);
+  background: var(--blue-soft);
 }
 
 /* Fields */
 .section-title { 
-  font-size: 16px; 
-  font-weight: 700; 
-  margin-bottom: 4px;
+  font-size: 18px; 
+  font-weight: 800; 
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
+  color: var(--text-main);
 }
 
 .profile-field-row { 
   display: grid; 
   grid-template-columns: 1fr 1fr; 
-  gap: 16px; 
+  gap: 20px; 
 }
 
 .profile-field { 
@@ -164,34 +179,36 @@
 }
 
 .profile-field label { 
-  font-size: 13px; 
-  font-weight: 600; 
+  font-size: 14px; 
+  font-weight: 700; 
   color: var(--text-main);
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .p-input, .p-textarea {
   background: var(--bg-color);
   border: 1px solid var(--glass-border);
-  border-radius: 12px;
-  padding: 12px 16px;
+  border-radius: 14px;
+  padding: 14px 18px;
   color: var(--text-main);
-  font-size: 14px; 
+  font-size: 15px; 
   font-family: inherit;
   outline: none; 
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   width: 100%;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
 }
 
 .p-input:focus, .p-textarea:focus { 
   border-color: var(--accent);
+  background: #fff;
   box-shadow: 0 0 0 4px var(--accent-glow);
 }
 
 .p-textarea { 
   resize: vertical; 
   line-height: 1.6; 
-  min-height: 100px;
+  min-height: 120px;
 }
 
 /* Resume Status Card */
@@ -199,15 +216,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px;
+  padding: 20px;
   background: var(--bg-color);
   border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  transition: border-color 0.2s;
+  border-radius: 20px;
+  transition: all 0.2s;
 }
 
 .resume-status-card:hover {
   border-color: var(--accent);
+  background: #fff;
+  box-shadow: var(--card-shadow);
 }
 
 .resume-info {
@@ -217,14 +236,15 @@
 }
 
 .resume-icon-bg {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  background: var(--accent-glow);
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: var(--blue-soft);
   color: var(--accent);
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
 }
 
 .resume-details {
@@ -233,54 +253,57 @@
 }
 
 .resume-details .file-name {
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text-main);
 }
 
 .resume-details .upload-date {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .view-resume-btn {
-  background: var(--panel-bg);
+  background: var(--bg-card);
   border: 1px solid var(--glass-border);
   color: var(--text-main);
-  padding: 8px 16px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   transition: all 0.2s;
+  box-shadow: var(--card-shadow);
 }
 
 .view-resume-btn:hover {
   background: var(--accent);
   color: #fff;
   border-color: var(--accent);
+  transform: translateY(-2px);
 }
 
 /* Skills */
 .skills-chips { 
   display: flex; 
   flex-wrap: wrap; 
-  gap: 8px; 
+  gap: 10px; 
 }
 
 .skill-tag {
   display: flex; 
   align-items: center; 
-  gap: 8px;
-  background: var(--accent-glow); 
-  border: 1px solid rgba(var(--accent-rgb), 0.2);
+  gap: 10px;
+  background: var(--blue-soft); 
+  border: 1px solid var(--blue-border);
   color: var(--accent);
-  font-size: 13px; 
-  font-weight: 600;
-  padding: 6px 14px; 
+  font-size: 14px; 
+  font-weight: 700;
+  padding: 8px 16px; 
   border-radius: 12px;
 }
 
@@ -291,23 +314,23 @@
   cursor: pointer; 
   display: flex;
   align-items: center; 
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
-.skill-tag button:hover { opacity: 1; }
+.skill-tag button:hover { opacity: 1; transform: scale(1.2); }
 
 .add-skill-row { 
   display: flex; 
   gap: 12px; 
-  margin-top: 8px;
+  margin-top: 12px;
 }
 
 .add-skill-btn {
   background: var(--accent); 
   color: #fff;
-  width: 44px; 
-  height: 44px;
-  border-radius: 12px; 
+  width: 48px; 
+  height: 48px;
+  border-radius: 14px; 
   display: flex; 
   align-items: center; 
   justify-content: center;
@@ -315,114 +338,124 @@
   flex-shrink: 0; 
   transition: all 0.2s;
   border: none;
-  box-shadow: 0 4px 10px var(--accent-glow);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 .add-skill-btn:hover { 
-  transform: scale(1.05);
-  box-shadow: 0 6px 15px var(--accent-glow);
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 8px 20px var(--accent-glow);
 }
 
 .settings-card {
-  background: var(--panel-bg);
+  background: var(--bg-card);
   border: 1px solid var(--glass-border);
-  border-radius: 20px;
+  border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
+  box-shadow: var(--card-shadow);
   margin-bottom: 24px;
 }
 
 .settings-section-title {
   padding: 24px 32px;
-  background: rgba(255, 255, 255, 0.02);
+  background: var(--bg-color);
   border-bottom: 1px solid var(--glass-border);
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 800;
   display: flex;
   align-items: center;
+  gap: 12px;
+  color: var(--text-main);
 }
 
 .settings-content-wrapper {
   padding: 32px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-.settings-input {
-  background: rgba(0, 0, 0, 0.2);
+  gap: 24px;
 }
 
 .settings-divider {
   height: 1px;
   background: var(--glass-border);
-  margin: 16px 0;
+  margin: 8px 0;
 }
 
 .btn-change-password {
-  background: #3b82f6;
+  background: var(--accent);
   color: #fff;
   border: none;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
   cursor: pointer;
   width: fit-content;
   transition: all 0.2s;
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 12px var(--accent-glow);
 }
 
 .btn-change-password:hover {
-  background: #2563eb;
+  background: var(--accent-secondary);
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 20px var(--accent-glow);
 }
 
 .settings-toggle-list { 
   display: flex; 
   flex-direction: column; 
+  gap: 16px;
 }
 
 .settings-toggle-row {
   display: flex; 
   align-items: center; 
   justify-content: space-between;
-  padding: 8px 0;
+  padding: 12px;
+  background: var(--bg-color);
+  border-radius: 16px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.settings-toggle-row:hover {
+  border-color: var(--glass-border);
+  background: #fff;
 }
 
 .settings-toggle-label {
-  font-weight: 600;
+  font-weight: 700;
   font-size: 15px;
   color: var(--text-main);
-  margin-bottom: 4px;
+  margin-bottom: 2px;
 }
 
 .settings-toggle-desc {
   font-size: 13px;
   color: var(--text-muted);
+  font-weight: 500;
 }
 
 .settings-toggle-row input[type="checkbox"] {
   appearance: none;
-  width: 44px; 
-  height: 24px;
+  width: 48px; 
+  height: 26px;
   background: var(--glass-border);
   border-radius: 20px; 
   position: relative;
   cursor: pointer; 
-  transition: background 0.3s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .settings-toggle-row input[type="checkbox"]:checked {
-  background: #3b82f6;
+  background: var(--accent);
 }
 
 .settings-toggle-row input[type="checkbox"]::before {
   content: ''; 
-  position: absolute;
-  width: 18px; 
-  height: 18px; 
+  position: relative;
+  display: block;
+  width: 20px; 
+  height: 20px; 
   border-radius: 50%;
   background: #fff; 
   top: 3px; 
@@ -432,18 +465,17 @@
 }
 
 .settings-toggle-row input[type="checkbox"]:checked::before {
-  transform: translateX(20px);
+  transform: translateX(22px);
 }
 
-/* Animations */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 1024px) {
-  .profile-page { padding: 24px 20px; }
+  .profile-page { padding: 32px 20px; }
   .profile-grid { grid-template-columns: 1fr; }
   .profile-field-row { grid-template-columns: 1fr; }
+  .avatar-panel { padding-bottom: 0; }
 }
-

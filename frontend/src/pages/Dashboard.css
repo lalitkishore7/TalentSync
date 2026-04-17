@@ -6,51 +6,49 @@
   transition: background-color var(--transition-speed);
 }
 
-/* Sidebar Arc-style */
+/* Sidebar Redesign (Linear-style) */
 .sidebar {
   width: var(--sidebar-width);
-  height: calc(100vh - 32px);
-  margin: 16px;
-  background: var(--panel-bg);
-  backdrop-filter: blur(20px);
-  border: 1px solid var(--glass-border);
-  border-radius: 24px;
+  height: 100vh;
+  background: var(--bg-card);
+  border-right: 1px solid var(--glass-border);
   display: flex;
   flex-direction: column;
-  padding: 24px 16px;
+  padding: 32px 16px;
   transition: all var(--transition-speed) cubic-bezier(0.4, 0, 0.2, 1);
   position: sticky;
-  top: 16px;
+  top: 0;
   z-index: 100;
-  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.1);
 }
 
 .sidebar.collapsed {
   width: var(--sidebar-collapsed-width);
-  padding: 24px 12px;
+  padding: 32px 12px;
 }
 
 .sidebar-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 40px;
-  padding: 0 8px;
+  margin-bottom: 32px;
+  padding: 0 12px;
 }
 
 .sidebar-brand {
-  font-size: 18px;
-  font-weight: 800;
+  font-size: 20px;
+  font-weight: 700;
   display: flex;
   flex-direction: column;
   letter-spacing: -0.5px;
+  color: var(--text-main);
 }
 
 .sidebar-brand span {
   font-size: 11px;
   color: var(--accent);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 .collapse-toggle {
@@ -58,23 +56,21 @@
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  padding: 8px;
+  padding: 6px;
   border-radius: 8px;
   transition: all 0.2s;
   display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .collapse-toggle:hover {
-  background: var(--glass-border);
+  background: var(--bg-color);
   color: var(--text-main);
 }
 
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   flex: 1;
 }
 
@@ -82,15 +78,14 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 16px;
+  padding: 10px 12px;
   color: var(--text-muted);
   text-decoration: none;
   font-size: 14px;
-  border-radius: 8px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 10px;
+  transition: all 0.2s ease;
   font-weight: 500;
   border: none;
-  border-left: 4px solid transparent;
   background: transparent;
   cursor: pointer;
   width: 100%;
@@ -98,25 +93,34 @@
 }
 
 .side-nav-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: var(--bg-color);
   color: var(--text-main);
 }
 
 .side-nav-item.active {
-  background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
-  border-left: 4px solid #3b82f6;
-  box-shadow: none;
+  background: var(--blue-soft);
+  color: var(--accent);
+  font-weight: 600;
 }
 
-.side-nav-item.active .icon-wrapper {
-  color: #3b82f6;
+.side-nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 20%;
+  height: 60%;
+  width: 4px;
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
 }
 
 .sidebar.collapsed .side-nav-item {
   justify-content: center;
   padding: 12px;
-  border-left: none;
+}
+
+.sidebar.collapsed .side-nav-item.active::before {
+  left: 0;
 }
 
 .icon-wrapper {
@@ -124,10 +128,11 @@
   align-items: center;
   justify-content: center;
   min-width: 24px;
+  transition: transform 0.2s ease;
 }
 
-.active-indicator {
-  display: none;
+.side-nav-item:hover .icon-wrapper {
+  transform: scale(1.1);
 }
 
 /* Footer & Actions */
@@ -135,7 +140,7 @@
   margin-top: auto;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 8px;
   padding-top: 20px;
   border-top: 1px solid var(--glass-border);
 }
@@ -150,18 +155,18 @@
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  padding: 10px;
-  border-radius: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
   transition: all 0.2s;
 }
 
 .theme-toggle-btn:hover {
-  background: var(--glass-border);
+  background: var(--bg-color);
   color: var(--text-main);
 }
 
 .logout-btn:hover {
-  background: rgba(239, 68, 68, 0.1);
+  background: #fef2f2;
   color: #ef4444;
 }
 
