@@ -63,7 +63,9 @@ export default function Login() {
         const payload = { ...formData, role: isStudent ? 'student' : 'company', isVerified: isStudent };
         data = await registerUser(payload);
       }
-      navigate('/dashboard/' + (data.user?.role || role));
+      
+      const userRole = data.user?.role || role || 'student';
+      navigate(`/dashboard/${userRole}`);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -228,6 +230,7 @@ export default function Login() {
                 exit={{ opacity: 0, x: -20 }}
               >
                 <form className="auth-form" onSubmit={handleSubmit}>
+                  {error && <div className="error-alert">{error}</div>}
                   {isStudent ? (
                     <>
                       <div className="input-group">

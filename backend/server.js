@@ -35,7 +35,7 @@ app.use('/api/student', studentRoutes);
 // Optional: Fallback Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send({ error: 'Something broke!' });
+  res.status(500).json({ error: err.message, stack: err.stack });
 });
 
 const PORT = process.env.PORT || 8001;

@@ -33,5 +33,19 @@ coverage/
 # Android / iOS generated files
 android/.gradle/
 android/app/build/
-ios/build/
 ios/Pods/
+
+# Python cache
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Backend uploads
+backend/uploads/
+
+# Temporary / Test files
+test_ml.py
+test_node_upload.js
+dummy.pdf
+backend/debug_db.js
+backend/seed_jobs.js

@@ -1,6 +1,6 @@
 fastapi
 uvicorn
-spacy
+openai
 scikit-learn
 pandas
 PyMuPDF
@@ -8,3 +8,5 @@ pydantic
 python-dotenv
 requests
 python-multipart
+numpy
+scipy

@@ -2,13 +2,13 @@ import { useState, useRef } from 'react';
 import { Upload, FileText, X, Zap, CheckCircle } from 'lucide-react';
 import './ResumeUpload.css';
 
-const PARSED_SKILLS = ['JavaScript', 'React', 'Node.js', 'TypeScript', 'SQL', 'Git', 'REST APIs', 'CSS'];
-const MISSING_SKILLS = ['Docker', 'GraphQL', 'AWS', 'Python'];
-
 export default function ResumeUpload() {
   const [file, setFile] = useState(null);
   const [dragging, setDragging] = useState(false);
   const [parsed, setParsed] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [analysis, setAnalysis] = useState(null);
+  const [error, setError] = useState('');
   const inputRef = useRef();
 
   const handleDrop = (e) => {
@@ -18,12 +18,56 @@ export default function ResumeUpload() {
     if (dropped) handleFile(dropped);
   };
 
-  const handleFile = (f) => {
+  const handleFile = async (f) => {
     setFile(f);
-    setTimeout(() => setParsed(true), 1200);
+    setLoading(true);
+    setParsed(false);
+    setError('');
+
+    const token = localStorage.getItem('token');
+    const formData = new FormData();
+    formData.append('file', f);
+
+    try {
+      const response = await fetch('http://localhost:8001/api/resumes/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || 'Failed to upload resume');
+      }
+
+      // Real results from AI Microservice
+      const profile = data.analysis?.profile || {};
+      const detectedSkills = profile.skills || [];
+      
+      // Calculate a semi-logical strength score based on data richness
+      const baseScore = 60;
+      const skillsBonus = Math.min(detectedSkills.length * 4, 30);
+      const experienceBonus = profile.experience_level ? 10 : 0;
+      const finalScore = Math.min(baseScore + skillsBonus + experienceBonus, 98);
+
+      setAnalysis({
+        skills: detectedSkills,
+        score: finalScore,
+        role: profile.role || 'Professional',
+        experience: profile.experience_level || 'General',
+        missing: profile.missing_skills || ['Cloud Architecture', 'System Design'] // Fallback missing skills suggestions
+      });
+      setParsed(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const removeFile = () => { setFile(null); setParsed(false); };
+  const removeFile = () => { setFile(null); setParsed(false); setAnalysis(null); setError(''); };
 
   return (
     <div className="resume-page">
@@ -62,31 +106,32 @@ export default function ResumeUpload() {
             </div>
           )}
 
-          {file && !parsed && (
+          {loading && (
             <div className="parsing-indicator">
               <div className="spinner" />
-              Analyzing your resume with AI…
+              Analyzing your resume with AI...
             </div>
           )}
+          {error && <div style={{color: 'red', marginTop: '10px'}}>{error}</div>}
         </div>
 
         {/* Analysis Panel */}
         <div className="resume-panel">
           <h2>Resume Strength</h2>
-          {parsed ? (
+          {parsed && analysis ? (
             <>
               <div className="strength-ring-wrap">
                 <svg viewBox="0 0 120 120" className="strength-ring">
                   <circle cx="60" cy="60" r="50" className="ring-bg" />
-                  <circle cx="60" cy="60" r="50" className="ring-fill" strokeDasharray="267 314" />
+                  <circle cx="60" cy="60" r="50" className="ring-fill" strokeDasharray={`${(analysis.score / 100) * 314} 314`} />
                 </svg>
-                <div className="ring-center"><span>85</span><small>/ 100</small></div>
+                <div className="ring-center"><span>{analysis.score}</span><small>/ 100</small></div>
               </div>
 
               <div className="skills-section">
                 <h3><Zap size={14} /> Detected Skills</h3>
                 <div className="skills-grid">
-                  {PARSED_SKILLS.map(s => (
+                  {analysis.skills.map(s => (
                     <span key={s} className="skill-chip detected"><CheckCircle size={11} /> {s}</span>
                   ))}
                 </div>
@@ -95,7 +140,7 @@ export default function ResumeUpload() {
               <div className="skills-section">
                 <h3>Recommended to Add</h3>
                 <div className="skills-grid">
-                  {MISSING_SKILLS.map(s => (
+                  {analysis.missing && analysis.missing.map(s => (
                     <span key={s} className="skill-chip missing">+ {s}</span>
                   ))}
                 </div>

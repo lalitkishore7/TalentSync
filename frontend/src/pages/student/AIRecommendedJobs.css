@@ -175,6 +175,30 @@
   box-shadow: 0 4px 12px rgba(99,102,241,0.4);
 }
 
+.view-gap-btn {
+  width: 100%;
+  margin-top: 12px;
+  background: rgba(99,102,241,0.08);
+  border: 1px solid rgba(99,102,241,0.2);
+  color: #818cf8;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s;
+}
+
+.view-gap-btn:hover {
+  background: rgba(99,102,241,0.15);
+  border-color: rgba(99,102,241,0.4);
+  transform: translateY(-2px);
+}
+
 .empty-jobs {
   grid-column: 1/-1;
   text-align: center;

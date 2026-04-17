@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Search, SlidersHorizontal, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import JobCard from '../../components/ui/JobCard';
+import SkillGapModal from '../../components/ui/SkillGapModal';
 import './AIRecommendedJobs.css';
 
 const FILTERS = ['All', 'Remote', 'Full-time', 'Contract', 'Internship'];
@@ -16,6 +17,9 @@ export default function AIRecommendedJobs() {
   const [jobs, setJobs] = useState([]);
   const [savedJobIds, setSavedJobIds] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedJob, setSelectedJob] = useState(null);
+  const [isGapModalOpen, setIsGapModalOpen] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     fetchJobs();
@@ -24,23 +28,21 @@ export default function AIRecommendedJobs() {
 
   const fetchJobs = async () => {
     try {
-      console.log('Fetching jobs from /api/jobs...');
-      const res = await axios.get('/api/jobs');
-      console.log('Jobs API response:', res.data);
+      const token = localStorage.getItem('token');
+      console.log('Fetching AI recommendations...');
+      const res = await axios.get('/api/student/recommendations', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      console.log('Recommendations received:', res.data);
       if (Array.isArray(res.data)) {
         setJobs(res.data);
       } else {
-        console.error('API did not return an array:', res.data);
-        throw new Error('Invalid data format');
+        throw new Error('Invalid recommendations format');
       }
     } catch (err) {
-      console.error('Error fetching jobs, using fallback mocks:', err);
-      // Fallback to mocks if backend is empty for demo
-      setJobs([
-        { id: '1', title: 'Frontend Developer', company: 'Google', location: 'Remote', salary: '$95k – $130k', type: 'Full-time', tags: ['React', 'TypeScript', 'GraphQL'], posted: '1 day ago', verified: true, match: 96 },
-        { id: '2', title: 'ML Engineer', company: 'OpenAI', location: 'San Francisco, CA', salary: '$140k – $180k', type: 'Full-time', tags: ['Python', 'PyTorch', 'LLMs'], posted: '3 days ago', verified: true, match: 91 },
-        { id: '3', title: 'Backend Engineer', company: 'Stripe', location: 'Hybrid · NYC', salary: '$110k – $150k', type: 'Full-time', tags: ['Go', 'Kubernetes', 'PostgreSQL'], posted: '2 days ago', verified: true, match: 88 }
-      ]);
+      console.error('Error fetching recommendations:', err);
+      setError('Could not fetch recommendations. Please ensure your profile is complete.');
     } finally {
       setLoading(false);
     }
@@ -93,6 +95,11 @@ export default function AIRecommendedJobs() {
 
   const handleApply = (job) => {
     navigate(`/dashboard/student/apply/${job.id || job._id}`);
+  };
+
+  const handleViewGap = (job) => {
+    setSelectedJob(job);
+    setIsGapModalOpen(true);
   };
 
   console.log('AIRecommendedJobs render starting...', { jobsLength: (jobs || []).length, loading, hasFiltered: !!filtered });
@@ -176,6 +183,12 @@ export default function AIRecommendedJobs() {
                   isSaved={(savedJobIds || []).includes(jobId)}
                   onToggleSave={handleToggleSave}
                 />
+                <button 
+                  className="view-gap-btn"
+                  onClick={() => handleViewGap(job)}
+                >
+                  <Sparkles size={12} /> View AI Analysis
+                </button>
               </div>
             );
           } catch (err) {
@@ -190,6 +203,13 @@ export default function AIRecommendedJobs() {
           </div>
         )}
       </div>
+
+      <SkillGapModal 
+        isOpen={isGapModalOpen}
+        onClose={() => setIsGapModalOpen(false)}
+        jobId={selectedJob?.id || selectedJob?._id}
+        jobTitle={selectedJob?.title}
+      />
     </div>
   );
 }

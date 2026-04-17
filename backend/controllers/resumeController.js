@@ -26,14 +26,22 @@ exports.uploadResume = async (req, res) => {
       formData.append('file', fs.createReadStream(req.file.path));
 
       const aiResponse = await axios.post(
-        `${process.env.ML_SERVICE_URL}/parse-resume`, 
+        `${process.env.ML_SERVICE_URL}/analyze-resume`, 
         formData,
         { headers: { ...formData.getHeaders() } }
       );
 
-      // Update student skills if found
-      if (aiResponse.data.skills) {
-        student.skills = [...new Set([...student.skills, ...aiResponse.data.skills])];
+      // Update student profile with AI results
+      if (aiResponse.data.success && aiResponse.data.profile) {
+        const { skills, education, experience_level } = aiResponse.data.profile;
+        
+        if (skills) {
+          student.skills = [...new Set([...student.skills, ...skills])];
+        }
+        
+        // Optionally update other fields if they are empty
+        if (education && !student.education) student.education = education;
+        
         await student.save();
       }
 

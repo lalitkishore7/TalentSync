@@ -1,5 +1,6 @@
 const Student = require('../models/Student');
 const Job = require('../models/Job');
+const axios = require('axios');
 
 // @desc    Get current student profile
 // @route   GET /api/student/profile
@@ -88,6 +89,55 @@ exports.getSavedJobs = async (req, res) => {
     
     if (!student) return res.json([]);
     res.json(student.savedJobs || []);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+// @desc    Get AI-powered job recommendations
+// @route   GET /api/student/recommendations
+exports.getRecommendations = async (req, res) => {
+  try {
+    const student = await Student.findOne({ user: req.user._id });
+    if (!student) return res.status(404).json({ message: 'Student profile not found' });
+
+    const jobs = await Job.find({ status: 'open' }).populate('company', 'companyName location industry');
+    
+    if (!student.skills || student.skills.length === 0) {
+      // If no skills extracted yet, just return jobs as is
+      return res.json(jobs.map(j => ({ ...j.toObject(), match: 0 })));
+    }
+
+    // Call ML Service for scores
+    try {
+      const mlResponse = await axios.post(`${process.env.ML_SERVICE_URL}/match-jobs`, {
+        candidate_skills: student.skills,
+        jobs: jobs.map(j => ({
+          id: j._id,
+          skillsRequired: j.skillsRequired,
+          description: j.description
+        }))
+      });
+
+      if (mlResponse.data.success) {
+        const scores = mlResponse.data.matches; // [{ jobId: '...', score: 85 }, ...]
+        
+        // Map scores back to job objects
+        const scoredJobs = jobs.map(job => {
+          const matchData = scores.find(s => s.jobId === job._id.toString());
+          return {
+            ...job.toObject(),
+            match: matchData ? matchData.score : 0
+          };
+        });
+
+        // Sort by match score descending
+        return res.json(scoredJobs.sort((a, b) => b.match - a.match));
+      }
+    } catch (mlErr) {
+      console.error('ML Recommendations Error:', mlErr.message);
+    }
+
+    res.json(jobs);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

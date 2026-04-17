@@ -5,7 +5,8 @@ const {
   updateProfile, 
   saveJob, 
   unsaveJob, 
-  getSavedJobs 
+  getSavedJobs,
+  getRecommendations 
 } = require('../controllers/studentController');
 const { protect, authorize } = require('../middleware/authMiddleware');
 
@@ -16,6 +17,7 @@ router.route('/profile')
   .get(getProfile)
   .put(updateProfile);
 
+router.get('/recommendations', getRecommendations);
 router.get('/jobs/saved', getSavedJobs);
 router.post('/jobs/:jobId/save', saveJob);
 router.delete('/jobs/:jobId/unsave', unsaveJob);

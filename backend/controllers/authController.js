@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Student = require('../models/Student');
 const Company = require('../models/Company');
+const Faculty = require('../models/Faculty');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
@@ -15,7 +16,8 @@ exports.register = async (req, res) => {
     const { 
       firstName, lastName, email, password, role,
       university, degree, year, // Student fields
-      companyName, gstNumber, regId, hqAddress // Company fields
+      companyName, gstNumber, regId, hqAddress, // Company fields
+      department, specialization // Faculty fields
     } = req.body;
 
     const userExists = await User.findOne({ email });
@@ -58,6 +60,13 @@ exports.register = async (req, res) => {
         gstCin: gstNumber,
         verifiedStatus
       });
+    } else if (user.role === 'faculty') {
+      await Faculty.create({
+        user: user._id,
+        university,
+        department,
+        specialization
+      });
     }
 
     res.status(201).json({
@@ -70,7 +79,12 @@ exports.register = async (req, res) => {
       token: generateToken(user._id)
     });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Registration Error:', error);
+    res.status(500).json({ 
+      message: 'Registration failed internal error', 
+      error: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 };
 
@@ -102,6 +116,7 @@ exports.login = async (req, res) => {
       res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
+    console.error('Login Error:', error);
     res.status(500).json({ message: error.message });
   }
 };
