@@ -7,7 +7,7 @@ load_dotenv()
 
 class Config:
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-    MODEL_NAME = "gemini-1.5-flash" 
+    MODEL_NAME = "gemini-flash-latest" 
     
     @staticmethod
     def setup_gemini():

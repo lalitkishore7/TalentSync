@@ -33,14 +33,17 @@ exports.uploadResume = async (req, res) => {
 
       // Update student profile with AI results
       if (aiResponse.data.success && aiResponse.data.profile) {
-        const { skills, education, experience_level } = aiResponse.data.profile;
+        const { skills, education, experience_level, role } = aiResponse.data.profile;
         
-        if (skills) {
-          student.skills = [...new Set([...student.skills, ...skills])];
+        // Replace skills with the latest analysis to keep it dynamic
+        if (skills && Array.isArray(skills)) {
+          student.skills = skills;
         }
         
-        // Optionally update other fields if they are empty
-        if (education && !student.education) student.education = education;
+        // Update profile fields
+        if (education) student.education = education;
+        if (experience_level) student.experience_level = experience_level;
+        if (role && !student.bio) student.bio = `Professional ${role}`;
         
         await student.save();
       }

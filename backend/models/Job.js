@@ -24,6 +24,13 @@ const JobSchema = new mongoose.Schema({
     enum: ['Full-time', 'Part-time', 'Internship', 'Contract'],
     default: 'Full-time'
   },
+  fraudRisk: {
+    type: Number,
+    default: 0
+  },
+  flaggedReasons: [{
+    type: String
+  }],
   status: {
     type: String,
     enum: ['open', 'closed'],

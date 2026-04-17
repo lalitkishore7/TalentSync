@@ -18,6 +18,7 @@ router.route('/profile')
   .put(updateProfile);
 
 router.get('/recommendations', getRecommendations);
+router.get('/dashboard/stats', getDashboardStats);
 router.get('/jobs/saved', getSavedJobs);
 router.post('/jobs/:jobId/save', saveJob);
 router.delete('/jobs/:jobId/unsave', unsaveJob);
