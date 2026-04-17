@@ -9,7 +9,7 @@ const login = async (email, password) => {
 
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.error || 'Login failed');
+    throw new Error(data.message || data.error || 'Login failed');
   }
   return data;
 };
@@ -23,7 +23,7 @@ const register = async (userData) => {
 
   const data = await response.json();
   if (!response.ok) {
-    throw new Error(data.error || 'Registration failed');
+    throw new Error(data.message || data.error || 'Registration failed');
   }
   return data;
 };

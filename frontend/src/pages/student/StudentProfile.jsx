@@ -1,34 +1,92 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 import { 
   Camera, Plus, X, Save, 
-  Lock, Bell, Shield, Key, FileText, ExternalLink
+  Lock, Bell, FileText, ExternalLink
 } from 'lucide-react';
 import CustomDropdown from '../../components/shared/CustomDropdown';
 import './StudentProfile.css';
 
-
-const INITIAL = {
-  firstName: 'Alex', lastName: 'Johnson',
-  email: 'alex@example.com', phone: '+1 (555) 234-5678',
-  bio: 'Passionate software engineering student with a focus on full-stack web development and machine learning.',
-  university: 'MIT', degree: 'B.Sc. Computer Science', year: '3rd Year',
-  skills: ['React', 'Node.js', 'Python', 'TypeScript', 'MongoDB'],
-  github: 'github.com/alexj', linkedin: 'linkedin.com/in/alexj',
-};
-
 export default function StudentProfile() {
-  const [form, setForm] = useState(INITIAL);
+  const [form, setForm] = useState({
+    firstName: '', lastName: '', email: '', phone: '',
+    bio: '', university: '', degree: '', year: '1st Year',
+    skills: [], github: '', linkedin: ''
+  });
+  const [loading, setLoading] = useState(true);
   const [newSkill, setNewSkill] = useState('');
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState('');
+
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
   const activeTab = searchParams.get('tab') || 'profile';
 
-  const handleChange = (e) => { setForm({ ...form, [e.target.name]: e.target.value }); setSaved(false); };
-  const addSkill = () => { if (newSkill.trim()) { setForm({ ...form, skills: [...form.skills, newSkill.trim()] }); setNewSkill(''); } };
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
+  const fetchProfile = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get('/api/student/profile', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      
+      const studentData = res.data;
+      setForm({
+        firstName: studentData.user?.firstName || '',
+        lastName: studentData.user?.lastName || '',
+        email: studentData.user?.email || '',
+        phone: studentData.phone || '',
+        bio: studentData.bio || '',
+        university: studentData.university || '',
+        degree: studentData.degree || '',
+        year: studentData.year || '1st Year',
+        skills: studentData.skills || [],
+        github: studentData.github || '',
+        linkedin: studentData.linkedin || ''
+      });
+    } catch (err) {
+      console.error('Error fetching profile:', err);
+      setError('Failed to load profile data.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSave = async () => {
+    try {
+      setError('');
+      setSaved(false);
+      const token = localStorage.getItem('token');
+      await axios.put('/api/student/profile', form, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3000);
+    } catch (err) {
+      console.error('Error saving profile:', err);
+      setError('Failed to save profile changes.');
+    }
+  };
+
+  const handleChange = (e) => { 
+    setForm({ ...form, [e.target.name]: e.target.value }); 
+    setSaved(false); 
+  };
+
+  const addSkill = () => { 
+    if (newSkill.trim() && !form.skills.includes(newSkill.trim())) { 
+      setForm({ ...form, skills: [...form.skills, newSkill.trim()] }); 
+      setNewSkill(''); 
+    } 
+  };
+
   const removeSkill = (s) => setForm({ ...form, skills: form.skills.filter(sk => sk !== s) });
-  const handleSave = () => setSaved(true);
+
+  if (loading) return <div className="loading-state">Syncing your profile...</div>;
 
   if (activeTab === 'settings') {
     return (
@@ -39,6 +97,8 @@ export default function StudentProfile() {
             <Save size={15} /> {saved ? 'Saved!' : 'Save Changes'}
           </button>
         </div>
+
+        {error && <div className="error-alert">{error}</div>}
 
         <div className="profile-grid">
           <div className="profile-panel" style={{gridColumn: 'span 2'}}>
@@ -95,38 +155,38 @@ export default function StudentProfile() {
         </button>
       </div>
 
+      {error && <div className="error-alert">{error}</div>}
+
       <div className="profile-grid">
-        {/* Avatar Card */}
         <div className="profile-panel avatar-panel">
           <div className="avatar-circle">
             <span>{form.firstName[0]}{form.lastName[0]}</span>
             <button className="avatar-edit"><Camera size={14} /></button>
           </div>
           <h2 className="avatar-name">{form.firstName} {form.lastName}</h2>
-          <span className="avatar-school">{form.university} · {form.year}</span>
+          <span className="avatar-school">{form.university || 'University not set'} · {form.year}</span>
           <div className="avatar-links">
-            <a href={`https://${form.github}`} target="_blank" rel="noreferrer" className="profile-link">GitHub</a>
-            <a href={`https://${form.linkedin}`} target="_blank" rel="noreferrer" className="profile-link">LinkedIn</a>
+            <a href={form.github ? `https://${form.github}` : '#'} target="_blank" rel="noreferrer" className="profile-link">GitHub</a>
+            <a href={form.linkedin ? `https://${form.linkedin}` : '#'} target="_blank" rel="noreferrer" className="profile-link">LinkedIn</a>
           </div>
         </div>
 
-        {/* Main Info */}
         <div className="profile-panel">
           <h3 className="section-title">Personal Information</h3>
           <div className="profile-field-row">
             <div className="profile-field">
               <label>First Name</label>
-              <input name="firstName" value={form.firstName} onChange={handleChange} className="p-input" />
+              <input name="firstName" value={form.firstName} onChange={handleChange} className="p-input" disabled />
             </div>
             <div className="profile-field">
               <label>Last Name</label>
-              <input name="lastName" value={form.lastName} onChange={handleChange} className="p-input" />
+              <input name="lastName" value={form.lastName} onChange={handleChange} className="p-input" disabled />
             </div>
           </div>
           <div className="profile-field-row">
             <div className="profile-field">
               <label>Email</label>
-              <input name="email" value={form.email} onChange={handleChange} className="p-input" />
+              <input name="email" value={form.email} onChange={handleChange} className="p-input" disabled />
             </div>
             <div className="profile-field">
               <label>Phone</label>
@@ -139,7 +199,6 @@ export default function StudentProfile() {
           </div>
         </div>
 
-        {/* Education */}
         <div className="profile-panel">
           <h3 className="section-title">Education</h3>
           <div className="profile-field-row">
@@ -162,7 +221,6 @@ export default function StudentProfile() {
           </div>
         </div>
 
-        {/* Resume Section */}
         <div className="profile-panel">
           <h3 className="section-title">My Resume</h3>
           <div className="resume-status-card">
@@ -171,18 +229,16 @@ export default function StudentProfile() {
                 <FileText size={20} />
               </div>
               <div className="resume-details">
-                <span className="file-name">Alex_Johnson_Resume.pdf</span>
-                <span className="upload-date">Uploaded on Apr 12, 2026</span>
+                <span className="file-name">{form.firstName}_Resume.pdf</span>
+                <span className="upload-date">Ready for AI Matching</span>
               </div>
             </div>
-            <button className="view-resume-btn" onClick={() => window.open('/resume_sample.pdf', '_blank')}>
-              View <ExternalLink size={14} />
+            <button className="view-resume-btn" onClick={() => navigate('/dashboard/student/resume')}>
+              Manage <ExternalLink size={14} />
             </button>
           </div>
         </div>
 
-
-        {/* Skills */}
         <div className="profile-panel">
           <h3 className="section-title">Skills</h3>
           <div className="skills-chips">
@@ -205,7 +261,6 @@ export default function StudentProfile() {
           </div>
         </div>
 
-        {/* Social */}
         <div className="profile-panel">
           <h3 className="section-title">Social Links</h3>
           <div className="profile-field">

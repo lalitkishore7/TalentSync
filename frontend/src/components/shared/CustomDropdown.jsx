@@ -22,7 +22,11 @@ export default function CustomDropdown({ options, value, onChange, label, placeh
   };
 
   return (
-    <div className="custom-dropdown-container" ref={dropdownRef}>
+    <div 
+      className="custom-dropdown-container" 
+      ref={dropdownRef}
+      style={{ zIndex: isOpen ? 2100 : 1 }}
+    >
       {label && <label className="dropdown-label">{label}</label>}
       <div 
         className={`dropdown-selection ${isOpen ? 'open' : ''}`} 

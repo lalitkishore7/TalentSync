@@ -8,13 +8,17 @@ const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '30d' });
 };
 
-// @desc    Register a new student
-// @route   POST /api/auth/register/student
-exports.registerStudent = async (req, res) => {
+// @desc    Unified Registration (Student or Company)
+// @route   POST /api/auth/register
+exports.register = async (req, res) => {
   try {
-    const { name, email, password } = req.body;
-    const userExists = await User.findOne({ email });
+    const { 
+      firstName, lastName, email, password, role,
+      university, degree, year, // Student fields
+      companyName, gstNumber, regId, hqAddress // Company fields
+    } = req.body;
 
+    const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -22,67 +26,47 @@ exports.registerStudent = async (req, res) => {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    const user = await User.create({
-      firstName: name.split(' ')[0],
-      lastName: name.split(' ').slice(1).join(' '),
+    // 1. Create User
+    const userData = {
+      firstName,
+      lastName: lastName || '',
       email,
       password: hashedPassword,
-      role: 'student'
-    });
+      role: role || 'student'
+    };
 
-    await Student.create({ user: user._id });
+    const user = await User.create(userData);
 
-    res.status(201).json({
-      _id: user._id,
-      name: `${user.firstName} ${user.lastName}`,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id)
-    });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-};
+    // 2. Create Profile based on role
+    if (user.role === 'student') {
+      await Student.create({
+        user: user._id,
+        university,
+        degree,
+        year,
+        skills: []
+      });
+    } else if (user.role === 'company') {
+      // Mock Government Verification for company
+      const isGovValid = regId?.startsWith('GOV') && (gstNumber?.length || 0) >= 10;
+      const verifiedStatus = isGovValid ? 'verified' : 'rejected';
 
-// @desc    Register a new company
-// @route   POST /api/auth/register/company
-exports.registerCompany = async (req, res) => {
-  try {
-    const { companyName, govRegId, gstCin, email, password } = req.body;
-    const userExists = await User.findOne({ email });
-
-    if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      await Company.create({
+        user: user._id,
+        companyName: companyName || firstName,
+        govRegId: regId,
+        gstCin: gstNumber,
+        verifiedStatus
+      });
     }
 
-    // Mock Government Verification
-    const isGovValid = govRegId.startsWith('GOV') && gstCin.length >= 10;
-    const verifiedStatus = isGovValid ? 'verified' : 'rejected';
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const user = await User.create({
-      firstName: companyName,
-      email,
-      password: hashedPassword,
-      role: 'company'
-    });
-
-    const company = await Company.create({
-      user: user._id,
-      companyName,
-      govRegId,
-      gstCin,
-      verifiedStatus
-    });
-
     res.status(201).json({
-      _id: user._id,
-      name: user.firstName,
-      email: user.email,
-      role: user.role,
-      verified: company.verifiedStatus === 'verified',
+      user: {
+        _id: user._id,
+        name: `${user.firstName} ${user.lastName}`.trim(),
+        email: user.email,
+        role: user.role
+      },
       token: generateToken(user._id)
     });
   } catch (error) {
@@ -105,11 +89,13 @@ exports.login = async (req, res) => {
       }
 
       res.json({
-        _id: user._id,
-        name: user.role === 'student' ? `${user.firstName} ${user.lastName}` : user.firstName,
-        email: user.email,
-        role: user.role,
-        ...extraInfo,
+        user: {
+          _id: user._id,
+          name: user.role === 'student' ? `${user.firstName} ${user.lastName}` : user.firstName,
+          email: user.email,
+          role: user.role,
+          ...extraInfo
+        },
         token: generateToken(user._id)
       });
     } else {

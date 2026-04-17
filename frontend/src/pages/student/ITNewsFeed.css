@@ -12,14 +12,42 @@
 
 .news-badge {
   display: inline-flex; align-items: center; gap: 6px;
-  font-size: 12px; font-weight: 600;
+  font-size: 11px; font-weight: 700;
   color: var(--accent);
-  background: rgba(255,107,0,0.1);
-  border: 1px solid rgba(255,107,0,0.2);
+  background: var(--accent-glow);
+  border: 1px solid var(--accent-glow);
   padding: 4px 12px; border-radius: 20px; width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.news-page h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; }
+.news-page h1 { font-size: 32px; font-weight: 700; letter-spacing: -1px; }
+
+.refresh-news-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--panel-bg);
+  border: 1px solid var(--glass-border);
+  color: var(--text-main);
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.refresh-news-btn:hover:not(:disabled) {
+  background: var(--accent-glow);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.refresh-news-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .news-page > .news-header p { font-size: 14px; color: var(--text-muted); }
 
 .news-categories { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -46,3 +74,42 @@
 @media (max-width: 768px) {
   .news-page { padding: 28px 20px; }
 }
+
+.spin {
+  animation: rotate 1s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.news-loading-state, .news-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 20px;
+  text-align: center;
+  gap: 20px;
+  background: var(--panel-bg);
+  border: 1px dashed var(--glass-border);
+  border-radius: 24px;
+  color: var(--text-muted);
+}
+
+.news-loading-state p {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.news-error-state button {
+  padding: 10px 24px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 10px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+

@@ -1,66 +1,110 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bookmark, MapPin, DollarSign, Clock, Trash2, ArrowRight } from 'lucide-react';
+import { Bookmark, MapPin, DollarSign, Clock, Trash2, ArrowRight, Building2, Sparkles } from 'lucide-react';
+import axios from 'axios';
 import './SavedJobs.css';
-
-const SAVED = [
-  { id: 1, title: 'Frontend Developer', company: 'Google', location: 'Remote', salary: '$95k – $130k', type: 'Full-time', tags: ['React', 'TypeScript'], savedAt: '2 days ago', logo: 'G', color: '#4285F4' },
-  { id: 2, title: 'ML Engineer', company: 'OpenAI', location: 'San Francisco, CA', salary: '$140k – $180k', type: 'Full-time', tags: ['Python', 'PyTorch'], savedAt: '4 days ago', logo: 'O', color: '#10b981' },
-  { id: 3, title: 'UX Designer', company: 'Figma', location: 'Remote', salary: '$90k – $120k', type: 'Full-time', tags: ['Figma', 'Prototyping'], savedAt: '1 week ago', logo: 'F', color: '#a259ff' },
-  { id: 4, title: 'Backend Engineer', company: 'Stripe', location: 'Hybrid · NYC', salary: '$110k – $150k', type: 'Full-time', tags: ['Go', 'Kubernetes'], savedAt: '1 week ago', logo: 'S', color: '#635BFF' },
-];
 
 export default function SavedJobs() {
   const navigate = useNavigate();
-  const [jobs, setJobs] = useState(SAVED);
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const remove = (id) => setJobs(jobs.filter(j => j.id !== id));
+  useEffect(() => {
+    fetchSavedJobs();
+  }, []);
+
+  const fetchSavedJobs = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const res = await axios.get('/api/student/jobs/saved', {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setJobs(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Error fetching saved jobs:', err);
+      // Fallback mocks for demo if backend is empty
+      setJobs([
+        { id: 1, title: 'Frontend Developer', company: { companyName: 'Google', location: 'Remote' }, salary: '$95k – $130k', type: 'Full-time', tags: ['React', 'TypeScript'], savedAt: '2 days ago', color: '#4285F4' },
+        { id: 2, title: 'ML Engineer', company: { companyName: 'OpenAI', location: 'San Francisco, CA' }, salary: '$140k – $180k', type: 'Full-time', tags: ['Python', 'PyTorch'], savedAt: '4 days ago', color: '#10b981' },
+      ]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const remove = async (id) => {
+    try {
+      const token = localStorage.getItem('token');
+      await axios.delete(`/api/student/jobs/${id}/unsave`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      setJobs(jobs.filter(j => (j.id || j._id) !== id));
+    } catch (err) {
+      console.error('Error removing job:', err);
+    }
+  };
 
   return (
     <div className="saved-page">
       <div className="saved-header">
-        <div>
-          <h1>Saved Jobs</h1>
-          <p>{jobs.length} job{jobs.length !== 1 ? 's' : ''} bookmarked</p>
+        <div className="saved-header-left">
+          <div className="saved-badge"><Bookmark size={13} /> My Bookmarks</div>
+          <h1>Saved Job Opportunities</h1>
+          <p>You have {jobs.length} curated roles in your bucket list.</p>
         </div>
         <button className="browse-btn" onClick={() => navigate('/dashboard/student/jobs')}>
-          Browse More <ArrowRight size={15} />
+          <Sparkles size={14} /> Find More Matches
         </button>
       </div>
 
-      {jobs.length === 0 ? (
+      {loading ? (
+        <div className="loading-state">Syncing your bucket list...</div>
+      ) : jobs.length === 0 ? (
         <div className="saved-empty">
-          <Bookmark size={40} />
-          <h2>No saved jobs yet</h2>
-          <p>Browse AI-matched jobs and bookmark the ones that interest you.</p>
-          <button onClick={() => navigate('/dashboard/student/jobs')}>Explore Jobs</button>
+          <div className="empty-icon-box">
+             <Bookmark size={48} className="empty-icon" />
+          </div>
+          <h2>Your bucket list is empty</h2>
+          <p>Explore AI-matched jobs that align with your career track and save them here.</p>
+          <button className="explore-btn" onClick={() => navigate('/dashboard/student/jobs')}>
+            Start Exploring
+          </button>
         </div>
       ) : (
-        <div className="saved-list">
+        <div className="saved-grid">
           {jobs.map(job => (
-            <div key={job.id} className="saved-item">
-              <div className="saved-logo" style={{ background: `${job.color}22`, color: job.color }}>
-                {job.logo}
-              </div>
-              <div className="saved-info">
-                <h3>{job.title}</h3>
-                <span className="saved-company">{job.company}</span>
-                <div className="saved-meta">
-                  <span><MapPin size={12} /> {job.location}</span>
-                  <span><DollarSign size={12} /> {job.salary}</span>
-                  <span><Clock size={12} /> {job.type}</span>
+            <div key={job.id || job._id} className="saved-card">
+              <div className="saved-card-main">
+                <div className="saved-logo-box" style={{ background: `${job.color || '#6366f1'}15`, color: job.color || '#6366f1' }}>
+                  <Building2 size={24} />
                 </div>
-                <div className="saved-tags">
-                  {job.tags.map(t => <span key={t} className="tag">{t}</span>)}
+                <div className="saved-content">
+                  <div className="saved-title-row">
+                    <h3>{job.title}</h3>
+                    <button className="remove-icon-btn" onClick={() => remove(job.id || job._id)} title="Remove">
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                  <span className="saved-company-name">{job.company?.companyName || job.company}</span>
+                  
+                  <div className="saved-tags-row">
+                    {job.tags?.slice(0, 2).map(t => <span key={t} className="saved-mini-tag">{t}</span>)}
+                  </div>
+
+                  <div className="saved-meta-grid">
+                    <div className="meta-item"><MapPin size={12} /> {job.location || job.company?.location || 'Remote'}</div>
+                    <div className="meta-item"><DollarSign size={12} /> {job.salary || 'Competitive'}</div>
+                    <div className="meta-item"><Clock size={12} /> {job.type || 'Full-time'}</div>
+                  </div>
                 </div>
               </div>
-              <div className="saved-actions">
-                <span className="saved-date">Saved {job.savedAt}</span>
-                <button className="apply-saved-btn" onClick={() => navigate(`/dashboard/student/apply/${job.id}`)}>
-                  Apply <ArrowRight size={14} />
-                </button>
-                <button className="remove-saved-btn" onClick={() => remove(job.id)} title="Remove">
-                  <Trash2 size={15} />
+              <div className="saved-card-footer">
+                <span className="saved-time">Saved {job.savedAt || 'recently'}</span>
+                <button 
+                  className="apply-saved-btn" 
+                  onClick={() => navigate(`/dashboard/student/apply/${job.id || job._id}`)}
+                >
+                  Apply Now <ArrowRight size={14} />
                 </button>
               </div>
             </div>

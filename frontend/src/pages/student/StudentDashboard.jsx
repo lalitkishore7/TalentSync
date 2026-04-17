@@ -1,5 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, Send, Eye, TrendingUp, ArrowRight, Sparkles, Clock } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import './StudentDashboard.css';
 
 const kpis = [
@@ -20,8 +21,8 @@ const statusColor = { Applied: '#f59e0b', Viewed: '#6366f1', Saved: '#10b981' };
 
 export default function StudentDashboard() {
   const navigate = useNavigate();
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const name = storedUser.name || 'there';
+  const { user } = useAuth();
+  const name = user?.name || 'there';
 
   return (
     <div className="student-dash">

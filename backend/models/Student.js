@@ -30,7 +30,11 @@ const StudentSchema = new mongoose.Schema({
     required: false
   },
   github: String,
-  linkedin: String
+  linkedin: String,
+  savedJobs: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Job'
+  }]
 }, { timestamps: true });
 
 module.exports = mongoose.model('Student', StudentSchema);

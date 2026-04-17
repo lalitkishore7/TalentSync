@@ -1,27 +1,51 @@
+import { useState, useEffect } from 'react';
+import axios from 'axios';
 import NewsCard from '../../components/ui/NewsCard';
-import { Rss } from 'lucide-react';
+import { Rss, RefreshCcw } from 'lucide-react';
 import './ITNewsFeed.css';
-
-const ARTICLES = [
-  { id: 1, title: 'GPT-5 Unveiled — What It Means for Developers', source: 'TechCrunch', publishedAt: '1h ago', readTime: '5 min', category: 'AI & ML', summary: 'OpenAI has released GPT-5 with a significant leap in reasoning and code generation, reshaping how developers think about AI-assisted workflows.' },
-  { id: 2, title: 'React 20 RC — Concurrent Features & New Hooks', source: 'Smashing Magazine', publishedAt: '3h ago', readTime: '4 min', category: 'Frontend', summary: 'The React team has shipped a release candidate for version 20 featuring new concurrent rendering APIs and a simplified server component model.' },
-  { id: 3, title: 'Rust Tops the Stack Overflow Survey Again', source: 'Dev.to', publishedAt: '5h ago', readTime: '3 min', category: 'Languages', summary: 'For the ninth consecutive year, Rust is the most loved programming language among developers, with adoption in systems and WebAssembly growing rapidly.' },
-  { id: 4, title: 'The Death of the REST API? GraphQL Surges', source: 'InfoQ', publishedAt: '8h ago', readTime: '6 min', category: 'Backend', summary: 'GraphQL adoption has hit an all-time high as teams prioritize flexibility and reduced over-fetching in microservice architectures.' },
-  { id: 5, title: 'Kubernetes 2.0 Simplifies Developer Experience', source: 'The New Stack', publishedAt: '1d ago', readTime: '5 min', category: 'DevOps', summary: 'The CNCF has shipped a major overhaul to Kubernetes that dramatically reduces configuration boilerplate while adding better developer tooling.' },
-  { id: 6, title: 'TypeScript 6 Introduces Nominal Types', source: 'Medium', publishedAt: '1d ago', readTime: '4 min', category: 'Frontend', summary: 'TypeScript 6 arrives with nominal typing support, strict enum improvements, and dramatically improved type inference for mapped types.' },
-];
 
 const CATEGORIES = ['All', 'AI & ML', 'Frontend', 'Backend', 'DevOps', 'Languages'];
 
 export default function ITNewsFeed() {
+  const [articles, setArticles] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetchNews();
+  }, []);
+
+  const fetchNews = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await axios.get('/api/news/latest');
+      setArticles(Array.isArray(res.data) ? res.data : []);
+    } catch (err) {
+      console.error('Error fetching news:', err);
+      setError('Could not load latest news. Please try again later.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="news-page">
       <div className="news-header">
         <div className="news-header-left">
           <div className="news-badge"><Rss size={13} /> Live Feed</div>
           <h1>IT News & Insights</h1>
-          <p>Stay ahead with curated tech news relevant to your career track.</p>
+          <p>Stay ahead with real-time news curated for your career track.</p>
         </div>
+        <button 
+          className="refresh-news-btn" 
+          onClick={fetchNews} 
+          disabled={loading}
+          title="Refresh news"
+        >
+          <RefreshCcw size={16} className={loading ? 'spin' : ''} />
+          <span>Refresh</span>
+        </button>
       </div>
 
       <div className="news-categories">
@@ -30,11 +54,30 @@ export default function ITNewsFeed() {
         ))}
       </div>
 
-      <div className="news-grid">
-        {ARTICLES.map(article => (
-          <NewsCard key={article.id} article={article} />
-        ))}
-      </div>
+      {loading ? (
+        <div className="news-loading-state">
+          <RefreshCcw size={32} className="spin" />
+          <p>Scraping the latest tech trends for you...</p>
+        </div>
+      ) : error ? (
+        <div className="news-error-state">
+          <p>{error}</p>
+          <button onClick={fetchNews}>Try Again</button>
+        </div>
+      ) : (
+        <div className="news-grid">
+          {articles.map((article, idx) => (
+            <NewsCard key={idx} article={{
+              ...article,
+              id: idx,
+              source: typeof article.source === 'string' ? article.source : (article.source?.name || 'Tech News'),
+              readTime: '4 min',
+              category: 'Technology',
+              summary: article.description || 'Global tech update from reliable sources.'
+            }} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

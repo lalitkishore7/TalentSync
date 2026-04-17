@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Shield, Eye, EyeOff, Check, Upload, Building2, GraduationCap, MapPin, FileCheck } from 'lucide-react';
+import { ArrowLeft, Shield, Eye, EyeOff, Check, Upload, Building2, GraduationCap, MapPin, FileCheck, Globe, Layers, Calendar } from 'lucide-react';
+
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
@@ -64,22 +65,7 @@ export default function Login() {
       }
       navigate('/dashboard/' + (data.user?.role || role));
     } catch (err) {
-      // If API is unreachable, fall back to a dummy session so the UI demo works
-      const isNetworkError = err.message?.includes('fetch') || err.name === 'TypeError';
-      if (isNetworkError || true) { // Force dummy for preview
-        const dummyUser = {
-          name: formData.firstName ? `${formData.firstName} ${formData.lastName}`.trim() : formData.email.split('@')[0],
-          email: formData.email || 'demo@talentsync.io',
-          role: isStudent ? 'student' : 'company',
-          isVerified: isStudent, // Students are auto-verified in this demo context
-          ...formData
-        };
-        localStorage.setItem('user', JSON.stringify(dummyUser));
-        setUserDirectly(dummyUser);
-        navigate(`/dashboard/${dummyUser.role}`);
-      } else {
-        setError(err.message);
-      }
+      setError(err.message);
     } finally {
       setLoading(false);
     }
@@ -168,11 +154,20 @@ export default function Login() {
               >
                 {!isLogin && step === 1 && (
                   <div className="social-login">
-                    <button className="btn-social">Google</button>
-                    <button className="btn-social">Github</button>
+                    <button type="button" className="btn-social">
+                      <Globe size={20} className="icon-google" />
+                      <span>Google</span>
+                    </button>
+                    <button type="button" className="btn-social">
+                      <Layers size={20} className="icon-github" />
+                      <span>GitHub</span>
+                    </button>
                   </div>
                 )}
-                <div className="divider">Account Credentials</div>
+                <div className="auth-divider">
+                  <span>OR</span>
+                </div>
+
 
                 <form className="auth-form" onSubmit={isLogin ? handleSubmit : handleNext}>
                   {error && <div className="error-alert">{error}</div>}
@@ -239,25 +234,28 @@ export default function Login() {
                         <label>University / Institution</label>
                         <div className="input-with-icon">
                           <Building2 size={16} />
-                          <input type="text" name="university" value={formData.university} onChange={handleChange} className="auth-input" placeholder="MIT, Stanford..." required />
+                          <input type="text" name="university" value={formData.university} onChange={handleChange} className="auth-input" required />
                         </div>
                       </div>
                       <div className="input-group">
                         <label>Degree Program</label>
                         <div className="input-with-icon">
                           <GraduationCap size={16} />
-                          <input type="text" name="degree" value={formData.degree} onChange={handleChange} className="auth-input" placeholder="B.Sc Computer Science" required />
+                          <input type="text" name="degree" value={formData.degree} onChange={handleChange} className="auth-input" required />
                         </div>
                       </div>
                       <div className="input-group">
                         <label>Year of Study</label>
-                        <select name="year" value={formData.year} onChange={handleChange} className="auth-input">
-                          <option>1st Year</option>
-                          <option>2nd Year</option>
-                          <option>3rd Year</option>
-                          <option>4th Year</option>
-                          <option>Graduate</option>
-                        </select>
+                        <div className="input-with-icon">
+                          <Calendar size={16} />
+                          <select name="year" value={formData.year} onChange={handleChange} className="auth-input">
+                            <option>1st Year</option>
+                            <option>2nd Year</option>
+                            <option>3rd Year</option>
+                            <option>4th Year</option>
+                            <option>Graduate</option>
+                          </select>
+                        </div>
                       </div>
                     </>
                   ) : (

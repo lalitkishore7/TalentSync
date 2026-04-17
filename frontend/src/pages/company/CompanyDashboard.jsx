@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Briefcase, Users, ShieldCheck, TrendingUp, ArrowRight, Plus, Clock } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import '../student/StudentDashboard.css';
 import './CompanyDashboard.css';
-
 
 const kpis = [
   { icon: Briefcase, label: 'Active Jobs', value: '5', delta: '2 expiring soon', color: '#6366f1' },
@@ -28,8 +28,8 @@ const activeJobs = [
 
 export default function CompanyDashboard() {
   const navigate = useNavigate();
-  const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
-  const name = storedUser.name || 'Company';
+  const { user } = useAuth();
+  const name = user?.name || 'Company';
 
   return (
     <div className="company-dash">

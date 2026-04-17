@@ -41,10 +41,15 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified, isC
   const basePath = `/dashboard/${role}`;
 
   const isActive = (path) => {
-    const [pathOnly] = path.split('?');
-    const fullPath = pathOnly ? `${basePath}/${pathOnly}` : basePath;
+    const fullPath = path ? `${basePath}/${path}` : basePath;
+    
+    // Exact match for the dashboard root
     if (path === '') return location.pathname === basePath || location.pathname === `${basePath}/`;
-    return location.pathname.startsWith(fullPath);
+    
+    // For other paths, ensure it matches exactly or is a sub-path that doesn't conflict
+    // e.g., if we are in /profile?tab=settings, we might want only Settings active, not Profile
+    const currentFullPath = location.pathname + location.search;
+    return currentFullPath.startsWith(fullPath);
   };
 
   const handleNav = (path) => {

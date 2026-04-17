@@ -3,8 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { MapPin, Clock, DollarSign, Bookmark, BookmarkCheck, ArrowRight, Building2 } from 'lucide-react';
 import './JobCard.css';
 
-export default function JobCard({ job, onApply }) {
-  const [saved, setSaved] = useState(job?.saved || false);
+export default function JobCard({ job, onApply, onToggleSave, isSaved }) {
   const navigate = useNavigate();
 
   const {
@@ -24,6 +23,11 @@ export default function JobCard({ job, onApply }) {
     navigate(`/dashboard/student/jobs/${id}`);
   };
 
+  const handleSaveClick = (e) => {
+    e.stopPropagation();
+    onToggleSave?.(id);
+  };
+
   return (
     <div className="job-card">
       <div className="job-card-header">
@@ -39,11 +43,11 @@ export default function JobCard({ job, onApply }) {
           {verified && <span className="verified-pill">✓ Verified</span>}
         </div>
         <button
-          className={`save-btn ${saved ? 'saved' : ''}`}
-          onClick={() => setSaved(!saved)}
-          title={saved ? 'Remove bookmark' : 'Save job'}
+          className={`save-btn ${isSaved ? 'saved' : ''}`}
+          onClick={handleSaveClick}
+          title={isSaved ? 'Remove bookmark' : 'Save job'}
         >
-          {saved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
+          {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </button>
       </div>
 
