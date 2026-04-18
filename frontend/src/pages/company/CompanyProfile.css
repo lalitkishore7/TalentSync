@@ -64,7 +64,7 @@
 .logo-edit-btn:hover { 
   color: var(--accent); 
   border-color: var(--accent);
-  background: #fff;
+  background: var(--hover-bg);
 }
 
 .brand-name { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); margin-bottom: 4px; }
@@ -90,7 +90,7 @@
 
 .cp-input:focus, .cp-textarea:focus { 
   border-color: var(--accent); 
-  background: #fff;
+  background: var(--input-focus-bg);
   box-shadow: 0 0 0 4px var(--accent-glow);
 }
 
@@ -108,7 +108,7 @@ select.cp-input { cursor: pointer; }
 }
 
 .settings-toggle-row:hover { 
-  background: #fff; 
+  background: var(--hover-bg); 
   border-color: var(--glass-border);
   box-shadow: var(--card-shadow);
 }

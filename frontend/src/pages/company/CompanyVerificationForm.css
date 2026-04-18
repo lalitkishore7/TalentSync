@@ -106,7 +106,7 @@
   transition: all 0.2s;
 }
 
-.doc-remove:hover { color: #ef4444; border-color: #ef4444; background: #fef2f2; }
+.doc-remove:hover { color: #ef4444; border-color: #ef4444; background: var(--red-soft); }
 
 .doc-upload-btn {
   display: flex; align-items: center; gap: 6px;
@@ -117,7 +117,7 @@
   box-shadow: var(--card-shadow);
 }
 
-.doc-upload-btn:hover { color: var(--accent); border-color: var(--accent); background: #fff; }
+.doc-upload-btn:hover { color: var(--accent); border-color: var(--accent); background: var(--hover-bg); }
 
 /* Progress */
 .cvf-progress { display: flex; flex-direction: column; gap: 10px; }

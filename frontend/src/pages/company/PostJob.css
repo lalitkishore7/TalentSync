@@ -127,7 +127,7 @@
 
 .pj-input:focus, .pj-textarea:focus { 
   border-color: var(--accent); 
-  background: #fff;
+  background: var(--input-focus-bg);
   box-shadow: 0 0 0 4px var(--accent-glow);
 }
 

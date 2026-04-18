@@ -201,7 +201,7 @@
 
 .p-input:focus, .p-textarea:focus { 
   border-color: var(--accent);
-  background: #fff;
+  background: var(--input-focus-bg);
   box-shadow: 0 0 0 4px var(--accent-glow);
 }
 
@@ -225,7 +225,7 @@
 
 .resume-status-card:hover {
   border-color: var(--accent);
-  background: #fff;
+  background: var(--hover-bg);
   box-shadow: var(--card-shadow);
 }
 
@@ -419,7 +419,7 @@
 
 .settings-toggle-row:hover {
   border-color: var(--glass-border);
-  background: #fff;
+  background: var(--hover-bg);
 }
 
 .settings-toggle-label {

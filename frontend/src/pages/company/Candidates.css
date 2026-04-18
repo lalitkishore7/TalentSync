@@ -60,7 +60,7 @@
 
 .search-input:focus {
   border-color: var(--accent);
-  background: #fff;
+  background: var(--input-focus-bg);
   box-shadow: 0 0 0 4px var(--accent-glow);
   outline: none;
 }
@@ -217,15 +217,15 @@
 }
 
 .status-badge.under-review {
-  background: #fffbeb;
+  background: var(--yellow-soft);
   color: #f59e0b;
-  border: 1px solid #fef3c7;
+  border: 1px solid var(--yellow-border);
 }
 
 .status-badge.rejected {
-  background: #fef2f2;
+  background: var(--red-soft);
   color: #ef4444;
-  border: 1px solid #fee2e2;
+  border: 1px solid var(--red-border);
 }
 
 .applied-date {

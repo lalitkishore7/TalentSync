@@ -79,10 +79,11 @@ export default function ResumeUpload() {
       ]);
 
       const result = response.data.analysis;
-      if (result && result.success) {
-        const profile = result.profile || {};
-        const detectedSkills = profile.skills || [];
-        
+      const profile = result?.profile || {};
+      const detectedSkills = profile.skills || [];
+      
+      // Accept if we got skills OR if the upload succeeded
+      if ((result && result.success) || detectedSkills.length > 0) {
         const finalScore = profile.resume_strength || 60;
 
         setAnalysis({
@@ -99,15 +100,23 @@ export default function ResumeUpload() {
             "Add specialized certifications or recent project tech stacks",
             "Ensure consistent formatting for dates and locations"
           ],
-          source: result.source || 'ai',
-          biasReport: result.biasReport || null
+          source: result?.source || 'ai',
+          biasReport: result?.biasReport || null
         });
         setParsed(true);
       } else {
-        setError(result?.error || 'Failed to parse resume');
+        setError(result?.error || response.data?.message || 'Could not extract data from this PDF. Try a different format.');
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message);
+      console.error('Upload error:', err);
+      const msg = err.response?.data?.message || err.message;
+      if (msg.includes('Student profile not found')) {
+        setError('Please complete your profile setup first, then try uploading again.');
+      } else if (msg.includes('token') || msg.includes('401') || msg.includes('authorized')) {
+        setError('Session expired. Please log out and log back in.');
+      } else {
+        setError(msg);
+      }
     } finally {
       setLoading(false);
     }

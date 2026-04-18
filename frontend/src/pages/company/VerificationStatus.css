@@ -117,7 +117,7 @@
 }
 
 .benefit-card:hover {
-  background: #fff;
+  background: var(--hover-bg);
   border-color: var(--accent);
   transform: translateY(-4px);
   box-shadow: var(--card-shadow);

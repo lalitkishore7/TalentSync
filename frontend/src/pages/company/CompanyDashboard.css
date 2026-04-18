@@ -13,7 +13,7 @@
 }
 
 .job-listing-row:hover { 
-  background: #fff;
+  background: var(--hover-bg);
   border-color: var(--accent);
   transform: translateX(8px) scale(1.01);
   box-shadow: var(--card-shadow);
@@ -30,4 +30,4 @@
   letter-spacing: 0.5px;
 }
 .jl-status.active { background: var(--green-soft); color: #10b981; border: 1px solid var(--green-border); }
-.jl-status.paused { background: #fffbeb; color: #f59e0b; border: 1px solid #fef3c7; }
+.jl-status.paused { background: var(--yellow-soft); color: #f59e0b; border: 1px solid var(--yellow-border); }

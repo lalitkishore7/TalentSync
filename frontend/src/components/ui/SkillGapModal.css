@@ -43,7 +43,7 @@
 }
 
 .close-x:hover {
-  background: #fff;
+  background: var(--hover-bg);
   color: var(--accent);
   border-color: var(--accent);
   transform: rotate(90deg);
@@ -105,9 +105,9 @@
 }
 
 .skill-tag.missing {
-  background: #fffbeb;
+  background: var(--yellow-soft);
   color: #f59e0b;
-  border: 1px solid #fef3c7;
+  border: 1px solid var(--yellow-border);
   padding: 8px 16px;
   border-radius: 12px;
   font-size: 14px;

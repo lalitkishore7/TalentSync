@@ -166,7 +166,7 @@
 }
 
 .logout-btn:hover {
-  background: #fef2f2;
+  background: var(--red-soft);
   color: #ef4444;
 }
 
