@@ -111,7 +111,10 @@ exports.applyJob = async (req, res) => {
     const application = await Application.create({
       student: student._id,
       job: req.params.id,
-      matchScore: matchScore
+      matchScore: matchScore,
+      coverLetter: req.body.coverLetter || '',
+      phone: req.body.phone,
+      linkedinUrl: req.body.linkedinUrl
     });
 
     res.status(201).json(application);
@@ -119,11 +122,13 @@ exports.applyJob = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const googleAIService = require('../services/googleAIService');
+
 // @desc    Get skill gap analysis for a job
 // @route   GET /api/jobs/:id/gap
 exports.getJobSkillGap = async (req, res) => {
   try {
-    const student = await Student.findOne({ user: req.user._id });
+    const student = await Student.findOne({ user: req.user._id }).populate('user', 'email');
     const job = await Job.findById(req.params.id);
 
     if (!student || !job) {
@@ -131,24 +136,56 @@ exports.getJobSkillGap = async (req, res) => {
     }
 
     try {
-      const mlResponse = await axios.post(`${process.env.ML_SERVICE_URL}/skill-gap`, {
-        candidate_skills: student.skills,
-        job_skills: job.skillsRequired
+      // Use Google Gemini AI for advanced analysis
+      const aiAnalysis = await googleAIService.getSkillAnalysis(student, job);
+      return res.json(aiAnalysis);
+    } catch (aiErr) {
+      console.error('[SkillGap] AI analysis failed, falling back to local logic:', aiErr.message);
+      
+      // Fallback if AI fails (basic string filtering)
+      const missing = job.skillsRequired.filter(s => 
+        !student.skills.some(ss => ss.toLowerCase() === s.toLowerCase())
+      );
+      
+      res.json({
+        missing_skills: missing,
+        matching_skills: student.skills.filter(s => 
+          job.skillsRequired.some(js => js.toLowerCase() === s.toLowerCase())
+        ),
+        optimization_tips: [
+          "Ensure your resume highlights the required skills mentioned in the job description.",
+          "Add quantifiable achievements for the skills you already possess."
+        ],
+        suitability_score: Math.round((student.skills.length / (job.skillsRequired.length || 1)) * 100),
+        recommendation: "Review the job description to understand key requirements and tailor your application accordingly."
       });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-      if (mlResponse.data.success) {
-        return res.json(mlResponse.data.insights);
-      }
-    } catch (mlErr) {
-      console.error('ML Skill Gap Error:', mlErr.message);
+// @desc    Get current student's applications
+// @route   GET /api/jobs/my-applications
+exports.getMyApplications = async (req, res) => {
+  try {
+    const student = await Student.findOne({ user: req.user._id });
+    if (!student) {
+      return res.status(404).json({ message: 'Student profile not found' });
     }
 
-    // Fallback if ML fails
-    const missing = job.skillsRequired.filter(s => !student.skills.includes(s));
-    res.json({
-      missing_skills: missing,
-      recommendation: "Review the job description to understand key requirements."
-    });
+    const applications = await Application.find({ student: student._id })
+      .populate({
+        path: 'job',
+        select: 'title location salaryRange jobType',
+        populate: {
+          path: 'company',
+          select: 'companyName industry'
+        }
+      })
+      .sort({ appliedAt: -1 });
+
+    res.json(applications);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

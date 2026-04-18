@@ -3,7 +3,7 @@ import {
   LogOut, Home, Briefcase, FileText, BookmarkCheck, 
   Newspaper, User, Settings, ShieldCheck, PlusCircle, 
   Users, Building2, Clock, PanelLeftClose, PanelLeftOpen,
-  Sun, Moon
+  Sun, Moon, ClipboardList
 } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -15,6 +15,7 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified, isC
   const studentLinks = [
     { icon: Home, label: 'Overview', path: '' },
     { icon: Briefcase, label: 'AI Job Matches', path: 'jobs' },
+    { icon: ClipboardList, label: 'My Applications', path: 'applications' },
     { icon: FileText, label: 'My Resume', path: 'resume' },
     { icon: BookmarkCheck, label: 'Saved Jobs', path: 'saved' },
     { icon: Newspaper, label: 'IT News', path: 'news' },
@@ -125,4 +126,3 @@ export default function Sidebar({ isStudent, handleLogout, role, isVerified, isC
     </aside>
   );
 }
-

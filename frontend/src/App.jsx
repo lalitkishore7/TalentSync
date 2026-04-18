@@ -13,6 +13,7 @@ import SavedJobs from './pages/student/SavedJobs';
 import ITNewsFeed from './pages/student/ITNewsFeed';
 import StudentProfile from './pages/student/StudentProfile';
 import JobDetails from './pages/student/JobDetails';
+import MyApplications from './pages/student/MyApplications';
 
 // Company pages
 import CompanyDashboard from './pages/company/CompanyDashboard';
@@ -41,6 +42,7 @@ function App() {
             <Route path="news" element={<ITNewsFeed />} />
             <Route path="profile" element={<StudentProfile />} />
             <Route path="jobs/:jobId" element={<JobDetails />} />
+            <Route path="applications" element={<MyApplications />} />
           </Route>
 
           {/* Company Dashboard */}

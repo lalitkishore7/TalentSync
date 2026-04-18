@@ -13,13 +13,27 @@ const ApplicationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['pending', 'reviewed', 'shortlisted', 'rejected'],
+    enum: ['pending', 'reviewed', 'shortlisted', 'rejected', 'hired'],
     default: 'pending'
   },
+  stage: {
+    type: String,
+    enum: ['applied', 'screening', 'interview', 'technical', 'offer', 'hired'],
+    default: 'applied'
+  },
+  coverLetter: {
+    type: String,
+    default: ''
+  },
+  phone: String,
+  linkedinUrl: String,
   appliedAt: {
     type: Date,
     default: Date.now
   }
 }, { timestamps: true });
+
+// Prevent duplicate applications
+ApplicationSchema.index({ student: 1, job: 1 }, { unique: true });
 
 module.exports = mongoose.model('Application', ApplicationSchema);

@@ -61,12 +61,25 @@ export default function StudentDashboard() {
     );
   }
 
-  const kpis = stats?.kpis || [
+  // Map API KPI data to include icons and types (icons can't be serialized from the API)
+  const kpiDefaults = [
     { icon: Briefcase, label: 'Matched Jobs', value: '0', delta: 'No skills added', type: 'blue' },
     { icon: Send, label: 'Applications Sent', value: '0', delta: 'Start applying!', type: 'orange' },
     { icon: Eye, label: 'Profile Views', value: '0', delta: '+0 today', type: 'green' },
     { icon: TrendingUp, label: 'Match Score', value: '0%', delta: 'Upload resume', type: 'purple' },
   ];
+
+  const kpis = kpiDefaults.map((defaultKpi, index) => {
+    const apiKpi = stats?.kpis?.[index];
+    if (apiKpi) {
+      return {
+        ...defaultKpi,
+        value: String(apiKpi.value ?? defaultKpi.value),
+        delta: apiKpi.delta || defaultKpi.delta,
+      };
+    }
+    return defaultKpi;
+  });
 
   return (
     <div className="student-dash">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { X, AlertCircle, BookOpen, CheckCircle2 } from 'lucide-react';
+import { X, AlertCircle, BookOpen, CheckCircle2, Sparkles } from 'lucide-react';
 import axios from 'axios';
 import './SkillGapModal.css';
 
@@ -52,27 +52,53 @@ export default function SkillGapModal({ isOpen, onClose, jobId, jobTitle }) {
           <div className="error-gap">{error}</div>
         ) : (
           <div className="gap-body">
-            <section className="missing-section">
-              <h3><AlertCircle size={18} color="#f59e0b" /> Missing Skills</h3>
-              <div className="skills-list">
-                {data.missing_skills && data.missing_skills.length > 0 ? (
-                  data.missing_skills.map(s => (
-                    <span key={s} className="skill-tag missing">{s}</span>
-                  ))
-                ) : (
-                  <div className="no-gap">
-                    <CheckCircle2 size={16} color="#10b981" />
-                    <span>You have all the required skills!</span>
-                  </div>
-                )}
+            <div className="suitability-meter">
+              <div className="meter-header">
+                <span>Suitability Score</span>
+                <span className="score-value">{data.suitability_score}%</span>
               </div>
+              <div className="meter-bg">
+                <div className="meter-fill" style={{ width: `${data.suitability_score}%`, background: data.suitability_score > 70 ? '#10b981' : data.suitability_score > 40 ? '#f59e0b' : '#ef4444' }} />
+              </div>
+            </div>
+
+            <div className="skills-grid">
+              <section className="skills-column">
+                <h3><CheckCircle2 size={18} color="#10b981" /> Matching Skills</h3>
+                <div className="skills-list">
+                  {data.matching_skills && data.matching_skills.length > 0 ? (
+                    data.matching_skills.map(s => <span key={s} className="skill-tag match">{s}</span>)
+                  ) : <span className="no-data">None yet</span>}
+                </div>
+              </section>
+
+              <section className="skills-column">
+                <h3><AlertCircle size={18} color="#f59e0b" /> Missing Skills</h3>
+                <div className="skills-list">
+                  {data.missing_skills && data.missing_skills.length > 0 ? (
+                    data.missing_skills.map(s => <span key={s} className="skill-tag missing">{s}</span>)
+                  ) : (
+                    <div className="no-gap">
+                      <CheckCircle2 size={14} color="#10b981" />
+                      <span>Perfect match!</span>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+
+            <section className="optimization-section">
+              <h3><Sparkles size={18} color="#8b5cf6" /> Optimization Tips</h3>
+              <ul className="tips-list">
+                {(data.optimization_tips || []).map((tip, i) => (
+                  <li key={i}>{tip}</li>
+                ))}
+              </ul>
             </section>
 
             <section className="recommendation-section">
               <h3><BookOpen size={18} color="#3b82f6" /> AI Learning Path</h3>
-              <div className="ai-advice">
-                {data.recommendation}
-              </div>
+              <div className="ai-advice">{data.recommendation}</div>
             </section>
 
             <div className="modal-footer">

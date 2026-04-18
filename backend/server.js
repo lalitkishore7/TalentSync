@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const path = require('path');
 const connectDB = require('./config/db');
+const seedDatabase = require('./seed');
 
 // Route Imports
 const authRoutes = require('./routes/auth');
@@ -13,7 +14,9 @@ const adminRoutes = require('./routes/admin');
 const studentRoutes = require('./routes/student');
 
 // Connect to MongoDB
-connectDB();
+connectDB().then(() => {
+  seedDatabase();
+});
 
 const app = express();
 

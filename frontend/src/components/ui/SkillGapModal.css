@@ -175,11 +175,107 @@
   box-shadow: 0 8px 20px var(--accent-glow);
 }
 
+.suitability-meter {
+  background: var(--bg-color);
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid var(--glass-border);
+}
+
+.meter-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.score-value {
+  color: var(--accent);
+}
+
+.meter-bg {
+  height: 8px;
+  background: var(--blue-soft);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.meter-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease-out;
+}
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.skill-tag {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.skill-tag.match {
+  background: var(--green-soft);
+  color: #10b981;
+  border: 1px solid var(--green-border);
+}
+
+.skill-tag.missing {
+  background: var(--yellow-soft);
+  color: #f59e0b;
+  border: 1px solid var(--yellow-border);
+}
+
+.no-data {
+  color: var(--text-muted);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.optimization-section {
+  background: rgba(139, 92, 246, 0.05);
+  border: 1px solid rgba(139, 92, 246, 0.1);
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.tips-list {
+  padding-left: 20px;
+  color: var(--text-main);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.tips-list li {
+  margin-bottom: 12px;
+}
+
+.tips-list li::marker {
+  color: #8b5cf6;
+}
+
+.ai-advice::before {
+  content: '📚 Learning Path';
+}
+
+@media (max-width: 640px) {
+  .skills-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+
