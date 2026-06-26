@@ -11,7 +11,10 @@ const connectDB = async () => {
       console.log('Using in-memory MongoDB for local development');
     }
 
-    const conn = await mongoose.connect(uri);
+    const conn = await mongoose.connect(uri, {
+      serverSelectionTimeoutMS: 5000,
+      family: 4 // Force IPv4, fixes Render Node 18+ DNS issues with Atlas
+    });
     console.log(`MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     console.error(`MongoDB connection error: ${error.message}`);
