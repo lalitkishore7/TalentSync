@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { motion, useScroll, useSpring } from 'framer-motion';
-import { Shield, Users, CheckCircle, Zap, MessageSquare, Mail, ChevronDown, Play, ArrowRight } from 'lucide-react';
-import { FaInstagram, FaTwitter, FaLinkedin } from 'react-icons/fa';
+import { motion, useScroll, useSpring, useTransform } from 'framer-motion';
+import { Shield, Users, CheckCircle, Zap, MessageSquare, Mail, ChevronDown, Play, ArrowRight, Sparkles, Building2, Briefcase } from 'lucide-react';
+import { FaInstagram, FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa';
 import RoleSelectionModal from '../components/RoleSelectionModal';
 import { useTheme } from '../context/ThemeContext';
 import Navbar from '../layouts/Navbar';
@@ -11,7 +11,7 @@ import StaggerItem from '../components/animations/StaggerItem';
 import '../App.css';
 
 const revealVariants = {
-  hidden: { opacity: 0, y: 30 },
+  hidden: { opacity: 0, y: 40 },
   visible: { 
     opacity: 1, 
     y: 0, 
@@ -62,105 +62,104 @@ export default function LandingPage() {
 
   const { scrollYProgress } = useScroll();
   const scaleX = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
+  
+  const opacity = useTransform(scrollYProgress, [0, 0.2], [1, 0]);
+  const scale = useTransform(scrollYProgress, [0, 0.2], [1, 0.95]);
 
   return (
     <div className="landing-page-root dark">
       <motion.div className="scroll-progress" style={{ scaleX }} />
       
+      {/* Background Animated Orbs */}
+      <div className="bg-orbs-container">
+        <div className="orb orb-1"></div>
+        <div className="orb orb-2"></div>
+        <div className="orb orb-3"></div>
+      </div>
+      
       <Navbar setIsModalOpen={setIsModalOpen} />
 
-      {/* Fixed Hero Section */}
-      <div className="hero-sticky-container">
-        <div className="hero-glow-base" />
-        <div className="hero-vertical-bars">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="hero-bar" />
-          ))}
-        </div>
+      {/* Floating UI Elements */}
+      <motion.div className="floating-element float-1" animate={{ y: [0, -20, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}>
+        <div className="glass-pill"><Sparkles size={16} /> AI Matched</div>
+      </motion.div>
+      <motion.div className="floating-element float-2" animate={{ y: [0, 20, 0] }} transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}>
+        <div className="glass-pill"><Building2 size={16} /> Verified Top Companies</div>
+      </motion.div>
+      <motion.div className="floating-element float-3" animate={{ y: [0, -15, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
+        <div className="glass-pill"><Briefcase size={16} /> Seamless Hiring</div>
+      </motion.div>
 
+      {/* Fixed Hero Section */}
+      <motion.div className="hero-sticky-container" style={{ opacity, scale }}>
+        <div className="hero-glow-base" />
+        
         <main className="hero-content-vetra">
+
           <motion.h1
             className="vetra-title"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
           >
-            Trusted Opportunities <br />
-            <motion.span 
-              className="elegant-italic"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1, delay: 0.5 }}
-            >
-              Smarter Careers.
-            </motion.span>
+            Unlock Your Potential with<br />
+            <span className="text-gradient-modern">TalentSync.</span>
           </motion.h1>
 
           <motion.p
             className="vetra-subtitle"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.8 }}
+            transition={{ duration: 1, delay: 0.4 }}
           >
-            AI-driven recruitment & insights. Empower your future, connect with verified companies, and maximize your potential effortlessly.
+            Experience AI-driven recruitment. Empower your future, connect securely with verified top-tier companies, and discover roles that match your unique skills.
           </motion.p>
 
           <motion.div 
             className="hero-actions-center"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
           >
             <button className="btn-get-started-hero" onClick={() => setIsModalOpen(true)}>
-              Get Started
+              Launch Platform <ArrowRight size={18} className="btn-icon-right"/>
+            </button>
+            <button className="btn-secondary-hero" onClick={() => { document.getElementById('about').scrollIntoView({ behavior: 'smooth' }); }}>
+              Learn More
             </button>
           </motion.div>
-
-          <motion.div 
-            className="hero-social-row"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.2 }}
-          >
-            <div className="hero-social-icon">
-              <FaInstagram size={18} />
-            </div>
-            <div className="hero-social-icon">
-              <FaTwitter size={18} />
-            </div>
-            <div className="hero-social-icon">
-              <FaLinkedin size={18} />
-            </div>
-          </motion.div>
         </main>
-      </div>
+      </motion.div>
 
       {/* Content Wrapper that scrolls over the Hero */}
       <div className="content-wrapper-next">
-        <Section id="about" className="about-section">
+        <Section id="about" className="about-section glass-section">
           <FadeUp>
             <div className="section-header">
-              <span className="section-badge">ABOUT US</span>
-              <h2>Getting to know TalentSync</h2>
-              <p>We are more than just a recruitment platform; we are your trusted partner in navigating the complexities of your career.</p>
+              <span className="section-badge-modern"><Users size={14}/> About Us</span>
+              <h2>Redefining the Hiring Landscape</h2>
+              <p>We combine advanced AI matching with uncompromising verification to create the ultimate career launchpad.</p>
             </div>
           </FadeUp>
           
           <div className="stats-grid">
-            <motion.div className="stat-card orange" variants={slideLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <div className="stat-icon"><Users size={24} /></div>
-              <div className="stat-value"><span>100K USERS</span></div>
-              <p>TalentSync rapidly attracting a substantial user base of over 500,000 students within its first year.</p>
+            <motion.div className="stat-card glass-card hover-glow" variants={slideLeft} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <div className="stat-icon-wrapper orange-glow"><Users size={28} /></div>
+              <div className="stat-value text-gradient-modern">100K+</div>
+              <div className="stat-label">Active Users</div>
+              <p>Join a rapidly growing community of professionals and students.</p>
             </motion.div>
-            <motion.div className="stat-card black" variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <div className="stat-icon"><Zap size={24} /></div>
-              <div className="stat-value"><span>98%</span></div>
-              <p>Users enjoy faster match rates and automated verification processing time.</p>
+            <motion.div className="stat-card glass-card hover-glow" variants={revealVariants} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <div className="stat-icon-wrapper blue-glow"><Zap size={28} /></div>
+              <div className="stat-value text-gradient-blue">98%</div>
+              <div className="stat-label">Match Accuracy</div>
+              <p>Our advanced ML algorithms ensure you find the perfect role faster.</p>
             </motion.div>
-            <motion.div className="stat-card gray" variants={slideRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
-              <div className="stat-icon"><Shield size={24} /></div>
-              <div className="stat-value"> <span>10K COMPANIES</span></div>
-              <p>A network of over 24,000 verified partner companies worldwide.</p>
+            <motion.div className="stat-card glass-card hover-glow" variants={slideRight} initial="hidden" whileInView="visible" viewport={{ once: true }}>
+              <div className="stat-icon-wrapper green-glow"><Shield size={28} /></div>
+              <div className="stat-value text-gradient-green">10K+</div>
+              <div className="stat-label">Verified Companies</div>
+              <p>Connect securely with government-verified partners worldwide.</p>
             </motion.div>
           </div>
         </Section>
@@ -169,26 +168,28 @@ export default function LandingPage() {
           <div className="features-container">
             <FadeUp>
               <div className="section-header">
-                <span className="section-badge">FEATURES</span>
-                <h2>All-in-one platform for your future</h2>
-                <p>Simplify your career search by securely connecting with verified companies and automated matching.</p>
+                <span className="section-badge-modern"><Sparkles size={14}/> Platform Features</span>
+                <h2>Everything you need to succeed</h2>
+                <p>A unified platform designed for efficiency, security, and precision.</p>
               </div>
             </FadeUp>
             
             <Stagger>
-              <div className="features-list">
+              <div className="features-grid-modern">
                 {[
-                  { id: '01', title: 'Secure and Easy Verification', desc: 'Government-backed automated verification for all companies.' },
-                  { id: '02', title: 'AI-Powered Job Matching', desc: 'Smarter recommendations based on your unique skills and profile.' },
-                  { id: '03', title: 'Real-Time Application Tracking', desc: 'Monitor your progress from application to offer in one place.' }
-                ].map(f => (
+                  { id: '01', title: 'Intelligent AI Matching', desc: 'Smarter recommendations based on your unique skills, resume, and experience.', icon: <Zap size={24}/> },
+                  { id: '02', title: 'Secure Verification', desc: 'Government-backed automated verification for companies to eliminate scams.', icon: <Shield size={24}/> },
+                  { id: '03', title: 'Seamless Tracking', desc: 'Monitor your progress from initial application to final offer in one place.', icon: <CheckCircle size={24}/> },
+                  { id: '04', title: 'Direct Communication', desc: 'Connect instantly with recruiters and hiring managers without middlemen.', icon: <MessageSquare size={24}/> }
+                ].map((f, idx) => (
                   <StaggerItem key={f.id}>
-                    <div className="feature-item">
-                      <span className="feature-id">{f.id}</span>
-                      <div className="feature-info">
-                        <h4>{f.title}</h4>
-                        <p>{f.desc}</p>
+                    <div className="feature-card-modern glass-card">
+                      <div className="feature-card-header">
+                        <div className="feature-icon-circle">{f.icon}</div>
+                        <span className="feature-id-modern">{f.id}</span>
                       </div>
+                      <h4>{f.title}</h4>
+                      <p>{f.desc}</p>
                     </div>
                   </StaggerItem>
                 ))}
@@ -197,34 +198,37 @@ export default function LandingPage() {
           </div>
         </Section>
 
-        <Section id="faqs" className="faq-section">
+        <Section id="faqs" className="faq-section glass-section">
           <FadeUp>
             <div className="section-header">
-              <span className="section-badge">FAQs</span>
-              <h2>Frequently Asked Questions</h2>
+              <span className="section-badge-modern"><MessageSquare size={14}/> FAQs</span>
+              <h2>Common Questions</h2>
             </div>
           </FadeUp>
           <Stagger>
-            <div className="faq-grid">
+            <div className="faq-grid-modern">
               {[
-                { q: "Is TalentSync free for students?", a: "Yes, TalentSync is completely free for all students looking for opportunities." },
-                { q: "How does AI matching work?", a: "Our AI analyzes your skills, experience, and preferences to match you with the best roles." },
-                { q: "Are all companies verified?", a: "Yes, we use government data and automated checks to ensure 100% verification." },
-                { q: "Can I track my applications?", a: "Absolutely. Your dashboard provides real-time updates on every application." }
+                { q: "Is TalentSync free for students?", a: "Yes! TalentSync is completely free for all students and job seekers looking for opportunities." },
+                { q: "How does the AI matching work?", a: "Our ML service analyzes your parsed resume, skills, and experience, comparing them against job requirements using TF-IDF and semantic matching to find the best fit." },
+                { q: "Are all companies verified?", a: "Yes. We mandate automated government-backed verification checks to ensure 100% authenticity and safety." },
+                { q: "Can I track my applications in real-time?", a: "Absolutely. Your dashboard provides live status updates on every application you submit." }
               ].map((item, i) => (
                 <StaggerItem key={i}>
                   <div 
-                    className={`faq-card ${activeFaq === i ? 'active' : ''}`}
+                    className={`faq-card-modern glass-card ${activeFaq === i ? 'active' : ''}`}
                     onClick={() => setActiveFaq(activeFaq === i ? null : i)}
                   >
-                    <div className="faq-question">
+                    <div className="faq-question-modern">
                       <h4>{item.q}</h4>
-                      <motion.div animate={{ rotate: activeFaq === i ? 180 : 0 }}>
+                      <motion.div 
+                        animate={{ rotate: activeFaq === i ? 180 : 0 }}
+                        className="faq-chevron"
+                      >
                         <ChevronDown size={20} />
                       </motion.div>
                     </div>
                     <motion.div 
-                      className="faq-answer"
+                      className="faq-answer-modern"
                       initial={false}
                       animate={{ height: activeFaq === i ? 'auto' : 0, opacity: activeFaq === i ? 1 : 0 }}
                       style={{ overflow: 'hidden' }}
@@ -239,43 +243,48 @@ export default function LandingPage() {
         </Section>
 
         <Section id="contact" className="contact-section">
-          <div className="contact-container">
-            <div className="contact-info">
-              <h2>Let's build your future together</h2>
-              <p>Have questions? Our team is here to help you get started.</p>
-              <div className="contact-methods">
-                <div className="method">
-                  <Mail size={20} />
+          <div className="contact-container-modern glass-card">
+            <div className="contact-info-modern">
+              <h2>Let's build your future</h2>
+              <p>Ready to get started or have questions? Our team is here to assist you.</p>
+              <div className="contact-methods-modern">
+                <div className="method-modern">
+                  <div className="method-icon"><Mail size={20} /></div>
                   <span>support@talentsync.com</span>
                 </div>
-                <div className="method">
-                  <MessageSquare size={20} />
+                <div className="method-modern">
+                  <div className="method-icon"><MessageSquare size={20} /></div>
                   <span>Live Chat Support</span>
                 </div>
               </div>
             </div>
-            <form className="contact-form" onSubmit={e => e.preventDefault()}>
-              <div className="form-group">
-                <input type="text" placeholder="Full Name" />
+            <form className="contact-form-modern" onSubmit={e => e.preventDefault()}>
+              <div className="form-group-modern">
+                <input type="text" placeholder="Full Name" required/>
               </div>
-              <div className="form-group">
-                <input type="email" placeholder="Email Address" />
+              <div className="form-group-modern">
+                <input type="email" placeholder="Email Address" required/>
               </div>
-              <div className="form-group">
-                <textarea placeholder="How can we help?" rows={4}></textarea>
+              <div className="form-group-modern">
+                <textarea placeholder="How can we help?" rows={4} required></textarea>
               </div>
-              <button className="btn btn-primary w-full">Send Message</button>
+              <button className="btn-submit-modern">Send Message <ArrowRight size={16}/></button>
             </form>
           </div>
         </Section>
 
-        <footer className="landing-footer">
-          <div className="footer-content">
-            <div className="footer-logo">
-              <Shield size={24} className="logo-icon" />
+        <footer className="landing-footer-modern">
+          <div className="footer-content-modern">
+            <div className="footer-logo-modern">
+              <Shield size={24} className="logo-icon-v" />
               <span>TalentSync</span>
             </div>
-            <p>© 2026 TalentSync. All rights reserved.</p>
+            <div className="footer-socials">
+              <a href="#" className="social-link"><FaGithub size={20}/></a>
+              <a href="#" className="social-link"><FaTwitter size={20}/></a>
+              <a href="#" className="social-link"><FaLinkedin size={20}/></a>
+            </div>
+            <p className="footer-copyright">© 2026 TalentSync. All rights reserved.</p>
           </div>
         </footer>
       </div>

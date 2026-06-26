@@ -70,7 +70,7 @@ export default function ResumeUpload() {
       // Start step animation in parallel with API call
       const [_, response] = await Promise.all([
         simulateSteps(),
-        axios.post('http://localhost:8001/api/resumes/upload', formData, {
+        axios.post(`${import.meta.env.VITE_API_URL || ''}/api/resumes/upload`, formData, {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'multipart/form-data'
@@ -127,7 +127,7 @@ export default function ResumeUpload() {
     setMatching(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:8001/api/resumes/match-job', {
+      const response = await axios.post(`${import.meta.env.VITE_API_URL || ''}/api/resumes/match-job`, {
         job_description: jd
       }, {
         headers: { 'Authorization': `Bearer ${token}` }

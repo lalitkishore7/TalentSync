@@ -22,7 +22,12 @@ const app = express();
 
 // Middleware
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? (process.env.FRONTEND_URL || 'https://talentsync.vercel.app') 
+    : '*',
+  credentials: true
+}));
 
 // Static Folder for Uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -38,7 +43,10 @@ app.use('/api/student', studentRoutes);
 // Optional: Fallback Error Handler
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: err.message, stack: err.stack });
+  res.status(500).json({ 
+    error: err.message, 
+    stack: process.env.NODE_ENV === 'production' ? null : err.stack 
+  });
 });
 
 const PORT = process.env.PORT || 8001;

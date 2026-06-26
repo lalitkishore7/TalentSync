@@ -29,6 +29,10 @@ const StudentSchema = new mongoose.Schema({
     type: String,
     required: false
   },
+  phone: {
+    type: String,
+    required: false
+  },
   github: String,
   linkedin: String,
   profileViews: {

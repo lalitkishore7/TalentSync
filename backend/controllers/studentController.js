@@ -27,7 +27,7 @@ exports.updateProfile = async (req, res) => {
     if (!student) return res.status(404).json({ message: 'Student profile not found' });
 
     const fieldsToUpdate = [
-      'university', 'degree', 'year', 'skills', 
+      'phone', 'university', 'degree', 'year', 'skills', 
       'bio', 'github', 'linkedin'
     ];
 
@@ -51,7 +51,7 @@ exports.saveJob = async (req, res) => {
     const student = await Student.findOne({ user: req.user._id });
     const jobId = req.params.jobId;
 
-    if (student.savedJobs.includes(jobId)) {
+    if (student.savedJobs.some(id => id.toString() === jobId)) {
       return res.status(400).json({ message: 'Job already saved' });
     }
 

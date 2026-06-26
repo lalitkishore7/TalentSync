@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8001/api/auth';
+const API_URL = (import.meta.env.VITE_API_URL || '') + '/api/auth';
 
 const login = async (email, password) => {
   const response = await fetch(`${API_URL}/login`, {
