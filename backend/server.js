@@ -23,9 +23,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? (process.env.FRONTEND_URL || 'https://talentsync.vercel.app') 
-    : '*',
+  origin: '*',
   credentials: true
 }));
 
