@@ -1,14 +1,12 @@
 const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
 
 const connectDB = async () => {
   try {
-    let uri = process.env.MONGO_URI;
-
-    if (uri === 'memory') {
-      const mongoServer = await MongoMemoryServer.create();
-      uri = mongoServer.getUri();
-      console.log('Using in-memory MongoDB for local development');
+    const uri = process.env.MONGO_URI;
+    
+    if (!uri) {
+      console.error('MONGO_URI environment variable is missing!');
+      return;
     }
 
     const conn = await mongoose.connect(uri, {
